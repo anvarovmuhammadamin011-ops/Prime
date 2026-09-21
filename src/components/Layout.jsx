@@ -3,6 +3,7 @@ import { useAuth } from '../auth/AuthContext.jsx'
 import { useClub } from '../club/ClubContext.jsx'
 import { fmt } from '../data.js'
 import { IconHome, IconMap, IconUser, IconLogout, IconGamepad, IconCoin, IconGift, IconTrophy, IconTeam } from './Icons.jsx'
+import MobileNav from './MobileNav.jsx'
 
 const NAV = [
   { to: '/', label: 'Bosh sahifa', icon: IconHome, match: '/' },
@@ -11,8 +12,6 @@ const NAV = [
   { to: '/my-teams', label: 'Mening jamoalarim', icon: IconTeam },
   { to: '/profile', label: 'Profil', icon: IconUser },
 ]
-
-
 
 export default function Layout() {
   const { user, logout } = useAuth()
@@ -106,6 +105,8 @@ export default function Layout() {
           <Outlet />
         </main>
       </div>
+
+      <MobileNav />
     </div>
   )
 }

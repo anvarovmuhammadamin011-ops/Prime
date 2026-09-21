@@ -13,6 +13,7 @@ import {
   IconClock,
   IconTrophy,
 } from './Icons.jsx'
+import AdminMobileNav from './AdminMobileNav.jsx'
 
 export default function AdminLayout({ children }) {
   const { user, logout } = useAuth()
@@ -112,6 +113,8 @@ export default function AdminLayout({ children }) {
 
         <main className="content">{children}</main>
       </div>
+
+      <AdminMobileNav />
     </div>
   )
 }

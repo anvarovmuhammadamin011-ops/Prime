@@ -13,6 +13,7 @@ import {
   IconTrendUp,
   IconTrophy,
 } from './Icons.jsx'
+import SuperAdminMobileNav from './SuperAdminMobileNav.jsx'
 
 export default function SuperAdminLayout({ children }) {
   const { user, logout } = useAuth()
@@ -103,6 +104,8 @@ export default function SuperAdminLayout({ children }) {
 
         <main className="content">{children}</main>
       </div>
+
+      <SuperAdminMobileNav />
     </div>
   )
 }
