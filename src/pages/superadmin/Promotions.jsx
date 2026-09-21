@@ -52,7 +52,7 @@ export default function SuperPromotions() {
           </div>
           <div>
             <b className="sa-stat-value">{activeCount}</b>
-            <p className="metric-label">Faol (Active)</p>
+            <p className="metric-label">Faol</p>
           </div>
         </div>
         <div className="sa-stat">
@@ -70,7 +70,7 @@ export default function SuperPromotions() {
         <div className="group-head">
           <h3 className="section-title">Promokodlar</h3>
           <button className="btn btn-primary" onClick={() => setAddOpen(true)}>
-            <IconPlus size={16} /> createPromo
+            <IconPlus size={16} /> Promo yaratish
           </button>
         </div>
 
@@ -82,19 +82,19 @@ export default function SuperPromotions() {
               <article key={p.id} className={`promo card ${!p.active ? 'promo-off' : ''}`}>
                 <div className="promo-top">
                   <code>{p.code}</code>
-                  <span className="zone-badge">{p.discount}% off</span>
+                  <span className="zone-badge">{p.discount}% chegirma</span>
                 </div>
 
                 <div className="promo-status-row">
                   <span className={`status-pill ${p.active ? 'on' : 'off'}`}>
-                    {p.active ? 'active' : 'inactive'}
+                    {p.active ? 'faol' : 'faol emas'}
                   </span>
                   {full ? <span className="muted small">Limiti to\u2018lgan</span> : null}
                 </div>
 
                 <div className="promo-usage">
                   <div className="progress-head">
-                    <span className="muted small">Usage</span>
+                    <span className="muted small">Foydalanish</span>
                     <b className="small">
                       {p.usage} / {p.limit}
                     </b>
@@ -111,7 +111,7 @@ export default function SuperPromotions() {
                   className={`btn btn-block ${p.active ? 'btn-ghost' : 'btn-primary'}`}
                   onClick={() => handleToggle(p)}
                 >
-                  {p.active ? 'deactivate' : 'activate'}
+                  {p.active ? "o\u2018chirish" : 'yoqish'}
                 </button>
               </article>
             )

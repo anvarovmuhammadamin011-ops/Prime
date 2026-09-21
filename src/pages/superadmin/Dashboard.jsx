@@ -15,7 +15,7 @@ export default function SuperAdminDashboard() {
   const metrics = [
     {
       icon: IconCoin,
-      label: 'Monthly Revenue',
+      label: 'Oylik daromad',
       value: fmt(m.revenue),
       unit: ' UZS',
       delta: m.revenueDelta,
@@ -24,7 +24,7 @@ export default function SuperAdminDashboard() {
     },
     {
       icon: IconTrendDown,
-      label: 'Monthly Expense',
+      label: 'Oylik xarajat',
       value: fmt(m.expense),
       unit: ' UZS',
       sub: 'Operatsion xarajatlar',
@@ -32,16 +32,16 @@ export default function SuperAdminDashboard() {
     },
     {
       icon: IconChart,
-      label: 'Net Profit',
+      label: 'Sof foyda',
       value: fmt(m.profit),
       unit: ' UZS',
-      badge: `${m.margin}% margin`,
+      badge: `${m.margin}% marja`,
       sub: 'Daromadlilik darajasi',
       color: 'metric-green',
     },
     {
       icon: IconTrendUp,
-      label: 'Utilization',
+      label: 'Bandlik',
       value: `${m.utilization}%`,
       sub: 'Zalning bandlik darajasi',
       color: 'metric-cyan',
@@ -51,9 +51,9 @@ export default function SuperAdminDashboard() {
   const max = Math.max(...MONTHLY_FINANCE.map((x) => x.rev))
 
   const topStats = [
-    { icon: IconUsers, label: 'Total Users', value: 2, sub: 'Active Members' },
-    { icon: IconCalendar, label: 'Total Bookings', value: 6, sub: 'jami bronlar' },
-    { icon: IconCart, label: 'Bar Sales', value: 3, sub: 'umumiy savdolar' },
+    { icon: IconUsers, label: 'Jami foydalanuvchilar', value: 2, sub: "Faol a'zolar" },
+    { icon: IconCalendar, label: 'Jami bronlar', value: 6, sub: 'jami bronlar' },
+    { icon: IconCart, label: 'Bar sotuvlari', value: 3, sub: 'umumiy savdolar' },
   ]
 
   return (
@@ -87,7 +87,7 @@ export default function SuperAdminDashboard() {
 
       <section className="finance-chart card">
         <div className="group-head">
-          <h3 className="section-title">Revenue vs Expense</h3>
+          <h3 className="section-title">Daromad vs Xarajat</h3>
           <div className="chart-legend">
             <span>
               <i className="lg-dot rev" /> Daromad
@@ -125,7 +125,7 @@ export default function SuperAdminDashboard() {
 
       <div className="two-col">
         <section className="card">
-          <h3 className="section-title">Utilization</h3>
+          <h3 className="section-title">Bandlik</h3>
           <div className="util-wrap">
             <div className="util-ring" style={{ '--p': `${m.utilization}%` }}>
               <div>

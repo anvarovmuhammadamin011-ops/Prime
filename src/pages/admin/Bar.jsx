@@ -15,14 +15,14 @@ import {
 
 export default function AdminBar() {
   const hall = useHall()
-  const [cat, setCat] = useState('All')
+  const [cat, setCat] = useState('Hammasi')
   const [cart, setCart] = useState([])
   const [addOpen, setAddOpen] = useState(false)
   const [toast, setToast] = useState('')
-  const [form, setForm] = useState({ name: '', price: '', category: 'Drinks', stock: '' })
+  const [form, setForm] = useState({ name: '', price: '', category: 'Ichimliklar', stock: '' })
   const [paid, setPaid] = useState(false)
 
-  const visible = hall.barProducts.filter((p) => cat === 'All' || p.cat === cat)
+  const visible = hall.barProducts.filter((p) => cat === 'Hammasi' || p.cat === cat)
 
   const qtyOf = (id) => cart.find((c) => c.id === id)?.qty || 0
 
@@ -73,14 +73,14 @@ export default function AdminBar() {
     if (!form.name.trim() || !price || stock < 0) return
     hall.addProduct({ name: form.name.trim(), cat: form.category, price, stock })
     setAddOpen(false)
-    setForm({ name: '', price: '', category: 'Drinks', stock: '' })
+    setForm({ name: '', price: '', category: 'Ichimliklar', stock: '' })
   }
 
   const metrics = [
-    { icon: IconCoin, label: 'Today Revenue', value: fmt(hall.barRevenue), unit: ' UZS' },
-    { icon: IconGift, label: 'Total Products', value: hall.barProducts.length, sub: 'mahsulot turi' },
-    { icon: IconChart, label: 'Low Stock', value: hall.lowStockCount, sub: 'ogohlantirish' },
-    { icon: IconCart, label: 'Sales Count', value: hall.salesCount, sub: 'bugungi savdo' },
+    { icon: IconCoin, label: 'Bugungi daromad', value: fmt(hall.barRevenue), unit: ' UZS' },
+    { icon: IconGift, label: 'Jami mahsulotlar', value: hall.barProducts.length, sub: 'mahsulot turi' },
+    { icon: IconChart, label: 'Kam zaxira', value: hall.lowStockCount, sub: 'ogohlantirish' },
+    { icon: IconCart, label: 'Sotish soni', value: hall.salesCount, sub: 'bugungi savdo' },
   ]
 
   return (
@@ -111,7 +111,7 @@ export default function AdminBar() {
           <div className="group-head">
             <h3 className="section-title">Mahsulotlar</h3>
             <button className="btn btn-primary" onClick={() => setAddOpen(true)}>
-              <IconPlus size={16} /> addProduct
+              <IconPlus size={16} /> Mahsulot qo'shish
             </button>
           </div>
 
@@ -246,7 +246,7 @@ export default function AdminBar() {
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
               >
-                {BAR_CATEGORIES.filter((c) => c !== 'All').map((c) => (
+                {BAR_CATEGORIES.filter((c) => c !== 'Hammasi').map((c) => (
                   <option key={c} value={c}>
                     {c}
                   </option>

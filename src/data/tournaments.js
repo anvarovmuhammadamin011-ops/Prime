@@ -36,6 +36,12 @@ export const MATCH_STATUS = {
   completed: 'completed',
 }
 
+export const MATCH_STATUS_LABELS = {
+  pending: 'Kutilmoqda',
+  live: 'Jonliy',
+  completed: 'Tugadi',
+}
+
 export const ROUND_NAMES = {
   0: '1-tur',
   1: 'Chorak final',

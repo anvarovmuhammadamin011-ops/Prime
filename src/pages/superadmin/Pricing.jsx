@@ -58,12 +58,12 @@ export default function SuperPricing() {
 
             <p className="current-price">
               <span className="grad-text">{fmt(z.price)}</span>
-              <span className="muted small"> UZS / hour</span>
+              <span className="muted small"> UZS / soat</span>
             </p>
 
             <div className="price-edit">
               <label>
-                <span className="muted small">pricePerHour</span>
+                <span className="muted small">Soatlik narx</span>
                 <input
                   type="number"
                   min="0"

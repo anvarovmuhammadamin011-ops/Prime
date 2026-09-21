@@ -27,8 +27,8 @@ export default function Home() {
   const navigate = useNavigate()
 
   const heroes = [
-    { icon: IconCoin, label: 'Balance', value: fmt(balance), unit: 'UZS', sub: 'Hisobingizdagi mablag\u2018' },
-    { icon: IconGift, label: 'Bonus points', value: bonus, unit: 'ball', sub: '100 ball = 15,000 so\u2018m' },
+    { icon: IconCoin, label: 'Balans', value: fmt(balance), unit: 'UZS', sub: 'Hisobingizdagi mablag\u2018' },
+    { icon: IconGift, label: 'Bonus ballar', value: bonus, unit: 'ball', sub: '100 ball = 15,000 so\u2018m' },
     { icon: IconClock, label: "O'ynalgan soat", value: user.hours ?? 184, unit: 'soat', sub: 'Jami o\u2018yin vaqti' },
     { icon: IconMap, label: "Bo'sh kompyuter", value: `${availableCount} / ${totalCount}`, unit: '', sub: 'Hozir bo\u2018sh o\u2018rinlar' },
   ]
@@ -48,7 +48,7 @@ export default function Home() {
           <p className="muted">Bugun qaysi zonada o&#39;ynashni xohlaysiz?</p>
         </div>
         <button className="btn btn-primary" onClick={() => navigate('/map')}>
-          Book now
+          Hoziroq bron qiling
         </button>
       </section>
 
@@ -179,7 +179,7 @@ export default function Home() {
                   <div className="book-right">
                     <span className="muted small">{fmt(b.price)} so&#39;m</span>
                     <span className={`badge ${b.status === 'confirmed' ? 'st-available' : 'st-pending'}`}>
-                      {b.status === 'confirmed' ? 'Tasdiqlangan' : 'Pending'}
+                      {b.status === 'confirmed' ? 'Tasdiqlangan' : 'Kutilmoqda'}
                     </span>
                   </div>
                 </li>

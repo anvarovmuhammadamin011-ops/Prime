@@ -76,10 +76,10 @@ export default function AdminBookings() {
                 }`}
               >
                 {b.status === 'confirmed'
-                  ? 'Confirmed'
+                  ? 'Tasdiqlangan'
                   : b.status === 'pending'
-                    ? 'Pending'
-                    : 'Rejected'}
+                    ? 'Kutilmoqda'
+                    : 'Rad etilgan'}
               </span>
             </div>
 
@@ -105,10 +105,10 @@ export default function AdminBookings() {
             {b.status === 'pending' ? (
               <div className="modal-actions">
                 <button className="btn btn-ghost reject" onClick={() => reject(b)}>
-                  <IconX size={16} /> Reject
+                  <IconX size={16} /> Rad etish
                 </button>
                 <button className="btn btn-primary" onClick={() => approve(b)}>
-                  <IconCheck size={16} /> Confirm
+                  <IconCheck size={16} /> Tasdiqlash
                 </button>
               </div>
             ) : null}

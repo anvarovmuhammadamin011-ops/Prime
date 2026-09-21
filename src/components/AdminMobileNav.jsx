@@ -15,7 +15,7 @@ export default function AdminMobileNav() {
   const pendingCount = hall.adminBookings.filter((b) => b.status === 'pending').length
 
   const NAV = [
-    { to: '/admin', label: 'Dashboard', icon: IconChart, end: true },
+    { to: '/admin', label: 'Boshqaruv', icon: IconChart, end: true },
     { to: '/admin/computers', label: 'PC', icon: IconDesktop },
     { to: '/admin/bar', label: 'Bar', icon: IconCart },
     { to: '/admin/bookings', label: 'Buyurtma', icon: IconCalendar, badge: pendingCount },

@@ -12,10 +12,10 @@ export default function SuperAdminMobileNav() {
   const location = useLocation()
 
   const NAV = [
-    { to: '/superadmin', label: 'Dashboard', icon: IconChart, end: true },
-    { to: '/superadmin/finance', label: 'Finance', icon: IconWallet },
-    { to: '/superadmin/staff', label: 'Staff', icon: IconUsers },
-    { to: '/superadmin/promotions', label: 'Promo', icon: IconGift },
+    { to: '/superadmin', label: 'Boshqaruv', icon: IconChart, end: true },
+    { to: '/superadmin/finance', label: 'Moliya', icon: IconWallet },
+    { to: '/superadmin/staff', label: 'Xodimlar', icon: IconUsers },
+    { to: '/superadmin/promotions', label: 'Aksiya', icon: IconGift },
     { to: '/superadmin/pricing', label: 'Narx', icon: IconTag },
     { to: '/superadmin/tournaments', label: 'Turnir', icon: IconTrophy },
   ]

@@ -33,11 +33,11 @@ export default function Tournaments() {
         <div className="t-card-meta">
           <span className="t-meta-item">
             <IconUsers size={14} />
-            {teams.length} / {t.maxTeams} team
+            {teams.length} / {t.maxTeams} jamoa
           </span>
           <span className="t-meta-item">
             <IconCoin size={14} />
-            {t.entryFee > 0 ? `${fmt(t.entryFee)} so'm` : 'FREE'}
+            {t.entryFee > 0 ? `${fmt(t.entryFee)} so'm` : 'BEPUL'}
           </span>
           {t.prizePool > 0 && (
             <span className="t-meta-item t-prize">

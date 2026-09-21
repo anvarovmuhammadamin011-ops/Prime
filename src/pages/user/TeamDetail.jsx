@@ -95,7 +95,7 @@ export default function TeamDetail() {
                 <div className="t-member-info">
                   <p className="t-member-name">{m.name}</p>
                   {m.userId === team.leaderId && (
-                    <span className="t-leader-badge"><IconCrown size={12} /> Leader</span>
+                    <span className="t-leader-badge"><IconCrown size={12} /> Sardor</span>
                   )}
                 </div>
                 {isLeader && m.userId !== team.leaderId && (

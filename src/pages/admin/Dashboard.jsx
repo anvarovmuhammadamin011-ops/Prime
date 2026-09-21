@@ -8,25 +8,25 @@ export default function AdminDashboard() {
   const metrics = [
     {
       icon: IconClock,
-      label: 'Active Sessions',
+      label: 'Faol seanslar',
       value: `${hall.bookedCount}/${hall.totalCount}`,
       sub: 'Hozirda band kompyuterlar',
     },
     {
       icon: IconGift,
-      label: 'Available',
+      label: 'Mavjud',
       value: hall.availableCount,
       sub: 'Foydalanishga tayyor',
     },
     {
       icon: IconCart,
-      label: 'Pending Bookings',
+      label: 'Kutilayotgan bronlar',
       value: hall.adminBookings.filter((b) => b.status === 'pending').length,
       sub: 'Tasdiqlash kutilmoqda',
     },
     {
       icon: IconCoin,
-      label: 'Bar Revenue',
+      label: 'Bar daromadi',
       value: fmt(hall.barRevenue),
       unit: ' UZS',
       sub: "Bugungi bar tushumi",
@@ -38,10 +38,10 @@ export default function AdminDashboard() {
     .sort((a, b) => b.temp - a.temp)
 
   const park = [
-    { key: 'available', label: 'Available', n: hall.availableCount },
-    { key: 'booked', label: 'Booked', n: hall.bookedCount },
-    { key: 'maintenance', label: 'Maintenance', n: hall.maintenanceCount },
-    { key: 'pending', label: 'Pending', n: hall.pendingMachined },
+    { key: 'available', label: 'Mavjud', n: hall.availableCount },
+    { key: 'booked', label: 'Band', n: hall.bookedCount },
+    { key: 'maintenance', label: 'Texnik xizmat', n: hall.maintenanceCount },
+    { key: 'pending', label: 'Kutilmoqda', n: hall.pendingMachined },
   ]
 
   const pending = hall.adminBookings.filter((b) => b.status === 'pending')
@@ -71,7 +71,7 @@ export default function AdminDashboard() {
 
       <div className="two-col">
         <section className="card">
-          <h3 className="section-title">Peak Hours</h3>
+          <h3 className="section-title">Yuqori soatlar</h3>
           <p className="muted small">Kun davomidagi zal bandligi (%)</p>
           <div className="peak-chart">
             {PEAK_HOURS.map((x) => (
@@ -85,7 +85,7 @@ export default function AdminDashboard() {
         </section>
 
         <section className="card">
-          <h3 className="section-title">Park Status</h3>
+          <h3 className="section-title">Park holati</h3>
           <p className="muted small">Qurilmalarning umumiy taqsimoti</p>
           <div className="park-status">
             {park.map((p) => (
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
 
       <div className="two-col">
         <section className="card">
-          <h3 className="section-title">High Temp</h3>
+          <h3 className="section-title">Yuqori harorat</h3>
           {highTemp.length ? (
             <ul className="temp-list">
               {highTemp.map((m) => (
@@ -135,7 +135,7 @@ export default function AdminDashboard() {
                   <div className="book-right">
                     <span className="muted small">{fmt(b.amount)} so&#39;m</span>
                     <span className={`badge ${b.status === 'confirmed' ? 'st-available' : 'st-pending'}`}>
-                      {b.status === 'confirmed' ? 'Tasdiqlangan' : 'Pending'}
+                      {b.status === 'confirmed' ? 'Tasdiqlangan' : 'Kutilmoqda'}
                     </span>
                   </div>
                 </li>

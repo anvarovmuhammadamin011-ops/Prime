@@ -7,7 +7,7 @@ export default function SuperStaff() {
         <div className="metric-icon accent-violet">
           <IconUsers size={26} />
         </div>
-        <h2>Staff</h2>
+        <h2>Xodimlar</h2>
         <p className="muted">
           Klub xodimlari va adminlarni boshqarish hamda huquqlarni sozlash keyingi bosqichda
           qo&#39;shiladi.

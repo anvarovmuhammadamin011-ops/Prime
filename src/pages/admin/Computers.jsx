@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿﻿﻿import { useState } from 'react'
 import { useHall } from '../../hall/HallContext.jsx'
 import { ZONE_FILTERS, STATUS_LABELS, TEMP_HIGH, ZONE_LABELS, fmt } from '../../data.js'
 import {
@@ -19,10 +19,10 @@ const STATUS_CLASS = {
 }
 
 const MODE_OPTIONS = [
-  { key: 'available', label: 'Available' },
-  { key: 'maintenance', label: 'Maintenance' },
-  { key: 'pending', label: 'Pending' },
-  { key: 'booked', label: 'Booked' },
+  { key: 'available', label: 'Mavjud' },
+  { key: 'maintenance', label: 'Texnik xizmat' },
+  { key: 'pending', label: 'Kutilmoqda' },
+  { key: 'booked', label: 'Band' },
 ]
 
 export default function AdminComputers() {
@@ -58,7 +58,7 @@ export default function AdminComputers() {
         <div className="group-head">
           <h3 className="section-title">Guruhli harakatlar</h3>
           <button className="btn btn-ghost" onClick={() => notify('Barcha zonalar qayta yuklandi')}>
-            <IconPlus size={16} /> Refresh
+            <IconPlus size={16} /> Yangilash
           </button>
         </div>
         {ZONE_FILTERS.slice(1).map((z) => (
@@ -72,19 +72,19 @@ export default function AdminComputers() {
                 className="power-btn on"
                 onClick={() => {
                   hall.groupPower(z.key, true)
-                  notify(`${ZONE_LABELS[z.key]} zonasi yoqildi (ON)`)
+                  notify(`${ZONE_LABELS[z.key]} zonasi yoqildi (YONIQ)`)
                 }}
               >
-                <IconPower size={15} /> ON
+                <IconPower size={15} /> YONIQ
               </button>
               <button
                 className="power-btn off"
                 onClick={() => {
                   hall.groupPower(z.key, false)
-                  notify(`${ZONE_LABELS[z.key]} zonasi o‘chirildi (OFF)`)
+                  notify(`${ZONE_LABELS[z.key]} zonasi o‘chirildi (O'CHIQ)`)
                 }}
               >
-                <IconMinus size={15} /> OFF
+                <IconMinus size={15} /> O'CHIQ
               </button>
             </div>
           </div>
@@ -116,7 +116,7 @@ export default function AdminComputers() {
 
             <div className="admin-stats">
               <div className="stat-chip">
-                <span className="muted small">Temp</span>
+                <span className="muted small">Harorat</span>
                 <b className={m.temp >= TEMP_HIGH ? 'temp-hot' : ''}>{Math.round(m.temp)}°C</b>
               </div>
               <div className="stat-chip">
@@ -139,7 +139,7 @@ export default function AdminComputers() {
                 }}
                 title="Yoqish"
               >
-                <IconPower size={15} /> ON
+                <IconPower size={15} /> YONIQ
               </button>
               <button
                 className="power-btn off"
@@ -148,7 +148,7 @@ export default function AdminComputers() {
                 }}
                 title="O‘chirish"
               >
-                <IconPower size={15} /> OFF
+                <IconPower size={15} /> O'CHIQ
               </button>
               <button
                 className="power-btn pause"
@@ -159,7 +159,7 @@ export default function AdminComputers() {
                 title={m.paused ? 'Davom etish' : 'Pauza qilish'}
               >
                 {m.paused ? <IconPlay size={15} /> : <IconPause size={15} />}
-                {m.paused ? 'Resume' : 'Pause'}
+                {m.paused ? 'Davom etish' : 'Pauza'}
               </button>
               <div className="settings-wrap">
                 <button

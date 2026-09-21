@@ -13,8 +13,8 @@ export default function Profile() {
   const hours = user.hours ?? 184
 
   const metrics = [
-    { icon: IconCoin, label: 'Balance', value: fmt(balance), unit: 'UZS' },
-    { icon: IconGift, label: 'Bonus points', value: bonus, unit: 'ball' },
+    { icon: IconCoin, label: 'Balans', value: fmt(balance), unit: 'UZS' },
+    { icon: IconGift, label: 'Bonus ballar', value: bonus, unit: 'ball' },
     { icon: IconClock, label: "O'ynalgan", value: hours, unit: 'soat' },
   ]
 
@@ -160,7 +160,7 @@ export default function Profile() {
                   <th>Sana va vaqt</th>
                   <th>Davomiylik</th>
                   <th>Narx</th>
-                  <th>Status</th>
+                  <th>Holat</th>
                 </tr>
               </thead>
               <tbody>
@@ -178,7 +178,7 @@ export default function Profile() {
                       <span
                         className={`badge ${b.status === 'confirmed' ? 'st-available' : 'st-pending'}`}
                       >
-                        {b.status === 'confirmed' ? 'Tasdiqlangan' : 'Pending'}
+                        {b.status === 'confirmed' ? 'Tasdiqlangan' : 'Kutilmoqda'}
                       </span>
                     </td>
                   </tr>

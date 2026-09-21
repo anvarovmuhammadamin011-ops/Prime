@@ -113,9 +113,9 @@ export default function TournamentDetail() {
           <div className="t-info-card">
             <IconCoin size={20} />
             <div>
-              <p className="t-info-label">Entry fee</p>
+              <p className="t-info-label">Kirish to'lovi</p>
               <p className="t-info-value">
-                {tournament.entryFee > 0 ? `${fmt(tournament.entryFee)} so'm / team` : 'FREE'}
+                {tournament.entryFee > 0 ? `${fmt(tournament.entryFee)} so'm / jamoa` : 'BEPUL'}
               </p>
             </div>
           </div>
@@ -225,7 +225,7 @@ export default function TournamentDetail() {
                           {m.scoreA}
                         </span>
                       </div>
-                      <span className="t-match-vs">vs</span>
+                      <span className="t-match-vs">VS</span>
                       <div className={`t-match-team ${teamBWon ? 't-match-team-won' : 't-match-team-lost'}`}>
                         <span className={`t-match-score ${teamBWon ? 't-match-score-win' : ''}`}>
                           {m.scoreB}
@@ -250,7 +250,7 @@ export default function TournamentDetail() {
             <div className="t-team-card-header">
               <span className="t-team-name-lg">{myTeam.name}</span>
               {myTeam.leaderId === user.phone && (
-                <span className="t-leader-badge"><IconCrown size={14} /> Leader</span>
+                <span className="t-leader-badge"><IconCrown size={14} /> Sardor</span>
               )}
             </div>
             <div className="t-team-members-list">
@@ -262,7 +262,7 @@ export default function TournamentDetail() {
                   <div>
                     <p className="t-member-name">{m.name}</p>
                     {m.userId === myTeam.leaderId && (
-                      <span className="t-leader-small">Leader</span>
+                      <span className="t-leader-small">Sardor</span>
                     )}
                   </div>
                 </div>

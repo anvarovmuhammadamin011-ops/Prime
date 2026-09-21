@@ -23,7 +23,7 @@ export default function SuperFinance() {
   const metrics = [
     {
       icon: IconCoin,
-      label: 'Revenue',
+      label: 'Daromad',
       value: fmt(FINANCE_REVENUE),
       unit: ' UZS',
       sub: 'Bronlar, bar va boshqa xizmatlar',
@@ -31,7 +31,7 @@ export default function SuperFinance() {
     },
     {
       icon: IconTrendDown,
-      label: 'Total Expense',
+      label: 'Jami xarajat',
       value: fmt(totalExpense),
       unit: ' UZS',
       sub: 'Operatsion va boshqa chiqimlar',
@@ -39,10 +39,10 @@ export default function SuperFinance() {
     },
     {
       icon: IconChart,
-      label: 'Net Profit',
+      label: 'Sof foyda',
       value: fmt(netProfit),
       unit: ' UZS',
-      badge: `%${margin} margin`,
+      badge: `%${margin} marja`,
       sub: 'Xarajatlardan keyingi sof daromad',
       color: 'metric-green',
     },
@@ -115,7 +115,7 @@ export default function SuperFinance() {
           <div className="group-head">
             <h3 className="section-title">Xarajatlar tarixi</h3>
             <button className="btn btn-primary" onClick={() => setAddOpen(true)}>
-              <IconPlus size={16} /> addExpense
+              <IconPlus size={16} /> Xarajat qo'shish
             </button>
           </div>
           {expenses.length ? (

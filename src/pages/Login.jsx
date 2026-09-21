@@ -97,7 +97,7 @@ export default function Login() {
           <p className="muted">Prime Club profilingizga kiring</p>
 
           <label className="field">
-            <span>Phone number</span>
+            <span>Telefon raqami</span>
             <input
               type="tel"
               value={phone}
@@ -109,7 +109,7 @@ export default function Login() {
           </label>
 
           <label className="field">
-            <span>Password</span>
+            <span>Parol</span>
             <div className="pass-wrap">
               <input
                 type={show ? 'text' : 'password'}
@@ -128,13 +128,13 @@ export default function Login() {
           {error ? <p className="error">{error}</p> : null}
 
           <button type="submit" className="btn btn-primary btn-block">
-            Sign in
+            Kirish
           </button>
 
           <p className="signup-line">
             Yangi foydalanuvchimisiz?{' '}
             <button type="button" className="link" onClick={() => setSignup(true)}>
-              Sign up
+              Ro'yxatdan o'tish
             </button>
           </p>
         </form>
@@ -154,7 +154,7 @@ export default function Login() {
                 </span>
               </div>
               <button type="button" className="btn btn-ghost" onClick={() => demoLogin(acc)}>
-                Demo login
+                Demo kirish
               </button>
             </div>
           ))}

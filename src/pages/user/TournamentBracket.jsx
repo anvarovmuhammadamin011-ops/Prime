@@ -100,7 +100,7 @@ export default function TournamentBracket() {
 
         {isLive && (
           <div className="bracket-match-status bracket-status-live">
-            <span className="live-dot" /> LIVE
+            <span className="live-dot" /> Jonliy
           </div>
         )}
 

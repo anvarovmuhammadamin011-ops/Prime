@@ -66,10 +66,10 @@ export default function Map() {
     <div className="page">
       <section className="legend card">
         {[
-          { key: 'available', label: 'Available', n: counts.available },
-          { key: 'booked', label: 'Booked', n: counts.booked },
-          { key: 'maintenance', label: 'Maintenance', n: counts.maintenance },
-          { key: 'pending', label: 'Pending', n: counts.pending },
+          { key: 'available', label: 'Mavjud', n: counts.available },
+          { key: 'booked', label: 'Band', n: counts.booked },
+          { key: 'maintenance', label: 'Texnik xizmat', n: counts.maintenance },
+          { key: 'pending', label: 'Kutilmoqda', n: counts.pending },
         ].map((s) => (
           <button
             key={s.key}
@@ -145,7 +145,7 @@ export default function Map() {
 
               {current.status === 'available' ? (
                 <button className="btn btn-primary btn-block" onClick={openBooking}>
-                  Book now
+                  Hoziroq bron qiling
                 </button>
               ) : (
                 <button className="btn btn-block" disabled>
@@ -218,7 +218,7 @@ export default function Map() {
                           {current.gpu} · {current.monitor}
                         </p>
                       </div>
-                      <span className="badge st-available">Available</span>
+                      <span className="badge st-available">Mavjud</span>
                     </div>
                     <button className="btn btn-primary btn-block" onClick={() => setStep(2)}>
                       Davom etish

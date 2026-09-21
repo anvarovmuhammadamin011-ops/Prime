@@ -120,7 +120,7 @@ export default function TournamentControl() {
             <IconTrophy size={18} />
             <div>
               <p className="t-stat-value">
-                {tournament.prizePool > 0 ? `${fmt(tournament.prizePool)}` : 'FREE'}
+                {tournament.prizePool > 0 ? `${fmt(tournament.prizePool)}` : 'BEPUL'}
               </p>
               <p className="t-stat-label">Sovrin</p>
             </div>
@@ -152,7 +152,7 @@ export default function TournamentControl() {
                 {team.isReady ? '✓' : '✕'}
               </span>
               <span className={`t-team-paid ${team.isPaid ? 't-paid' : 't-unpaid'}`}>
-                {team.isPaid ? 'Paid' : 'Unpaid'}
+                {team.isPaid ? 'To\'langan' : 'To\'lanmagan'}
               </span>
               {!team.isPaid && (
                 <button

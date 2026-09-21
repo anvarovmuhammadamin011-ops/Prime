@@ -21,25 +21,25 @@ export default function AdminLayout({ children }) {
   const location = useLocation()
 
   const NAV = [
-    { to: '/admin', label: 'Dashboard', icon: IconChart, end: true },
-    { to: '/admin/computers', label: 'Computers', icon: IconDesktop },
+    { to: '/admin', label: 'Boshqaruv', icon: IconChart, end: true },
+    { to: '/admin/computers', label: 'Kompyuterlar', icon: IconDesktop },
     { to: '/admin/bar', label: 'Bar', icon: IconCart },
-    { to: '/admin/bookings', label: 'Bookings', icon: IconCalendar },
-    { to: '/admin/tournaments', label: 'Tournaments', icon: IconTrophy },
+    { to: '/admin/bookings', label: 'Bronlar', icon: IconCalendar },
+    { to: '/admin/tournaments', label: 'Turnirlar', icon: IconTrophy },
   ]
 
   const pendingCount = hall.adminBookings.filter((b) => b.status === 'pending').length
 
   const currentLabel =
     location.pathname === '/admin'
-      ? 'Admin Dashboard'
+      ? 'Admin boshqaruvi'
       : location.pathname.startsWith('/admin/computers')
-        ? 'Computers'
+        ? 'Kompyuterlar'
         : location.pathname.startsWith('/admin/bar')
           ? 'Bar'
           : location.pathname.startsWith('/admin/tournaments')
-            ? 'Tournaments'
-            : 'Bookings'
+            ? 'Turnirlar'
+            : 'Bronlar'
 
   const initials = (user.name || '?')
     .split(' ')
@@ -106,7 +106,7 @@ export default function AdminLayout({ children }) {
             <span className="chip chip-accent">
               <IconCoin size={15} /> {fmt(hall.barRevenue)} UZS
             </span>
-            <span className="chip chip-violet">{pendingCount} pending</span>
+            <span className="chip chip-violet">{pendingCount} kutilmoqda</span>
             <div className="top-avatar">{initials}</div>
           </div>
         </header>

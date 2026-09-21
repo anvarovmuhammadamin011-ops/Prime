@@ -50,7 +50,7 @@ export default function JoinTeam() {
 
         <div className="t-join-leader">
           <IconCrown size={16} />
-          <span>Leader: <strong>{team.leaderName}</strong></span>
+          <span>Sardor: <strong>{team.leaderName}</strong></span>
         </div>
 
         <div className="t-join-members">

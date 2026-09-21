@@ -29,7 +29,7 @@ export default function AdminTournaments() {
   return (
     <div className="page">
       <div className="t-admin-header">
-        <h2>Tournaments</h2>
+        <h2>Turnirlar</h2>
         <button className="btn btn-primary" onClick={() => navigate('/admin/tournaments/create')}>
           <IconPlus size={16} /> Turnir yaratish
         </button>
@@ -53,7 +53,7 @@ export default function AdminTournaments() {
               <div className="t-admin-card-meta">
                 <span><IconClock size={14} /> {t.date} · {t.startTime}</span>
                 <span><IconUsers size={14} /> {teams.length} / {t.maxTeams}</span>
-                <span><IconCoin size={14} /> {t.entryFee > 0 ? `${fmt(t.entryFee)} so'm` : 'FREE'}</span>
+                <span><IconCoin size={14} /> {t.entryFee > 0 ? `${fmt(t.entryFee)} so'm` : 'BEPUL'}</span>
                 {t.prizePool > 0 && (
                   <span className="t-prize"><IconTrophy size={14} /> {fmt(t.prizePool)} so'm</span>
                 )}

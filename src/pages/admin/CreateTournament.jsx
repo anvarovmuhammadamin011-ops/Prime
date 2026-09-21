@@ -120,7 +120,7 @@ export default function CreateTournament() {
           </div>
 
           <div className="t-form-group">
-            <label>Entry fee (so'm / team)</label>
+            <label>Kirish to'lovi (so'm / jamoa)</label>
             <input
               type="number"
               className="input"

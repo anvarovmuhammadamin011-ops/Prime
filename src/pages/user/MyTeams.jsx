@@ -41,7 +41,7 @@ export default function MyTeams() {
                     )}
                   </div>
                   {team.leaderId === user.phone && (
-                    <span className="t-leader-badge"><IconCrown size={12} /> Leader</span>
+                    <span className="t-leader-badge"><IconCrown size={12} /> Sardor</span>
                   )}
                 </div>
 

@@ -89,10 +89,10 @@ export const PRICING = [
 ]
 
 export const STATUS_LABELS = {
-  available: 'Available',
-  booked: 'Booked',
-  maintenance: 'Maintenance',
-  pending: 'Pending',
+  available: 'Mavjud',
+  booked: 'Band',
+  maintenance: 'Texnik xizmat',
+  pending: 'Kutilmoqda',
 }
 
 const mk = (name, zone, price, cpu, gpu, ram, monitor, status, temp, uptime, powered, sessionMin) => ({
@@ -182,7 +182,7 @@ export const ZONE_LABELS = {
   VIP: 'VIP',
   'Gaming Pro': 'Gaming Pro',
   Standard: 'Standard',
-  PS5: 'Console',
+  PS5: 'Konsol',
 }
 
 export function createInitialAdminBookings() {
@@ -215,17 +215,17 @@ export function createInitialAdminBookings() {
 
 export function createInitialBarProducts() {
   return [
-    { id: 1, name: 'Pepsi 0.5L', cat: 'Drinks', price: 8000, stock: 20 },
-    { id: 2, name: 'Red Bull', cat: 'Drinks', price: 15000, stock: 3 },
-    { id: 3, name: 'Espresso', cat: 'Drinks', price: 14000, stock: 12 },
-    { id: 9, name: 'Water 0.5L', cat: 'Drinks', price: 5000, stock: 24 },
-    { id: 4, name: 'Lays Chips', cat: 'Snacks', price: 12000, stock: 18 },
-    { id: 5, name: 'Snickers', cat: 'Snacks', price: 9000, stock: 15 },
-    { id: 10, name: 'Doritos', cat: 'Snacks', price: 10000, stock: 2 },
-    { id: 6, name: 'Burger', cat: 'Hot Food', price: 32000, stock: 8 },
-    { id: 7, name: 'Hot-Dog', cat: 'Hot Food', price: 22000, stock: 6 },
-    { id: 11, name: 'Pizza Slice', cat: 'Hot Food', price: 28000, stock: 4 },
-    { id: 8, name: 'Cheesecake', cat: 'Desserts', price: 25000, stock: 5 },
+    { id: 1, name: 'Pepsi 0.5L', cat: 'Ichimliklar', price: 8000, stock: 20 },
+    { id: 2, name: 'Red Bull', cat: 'Ichimliklar', price: 15000, stock: 3 },
+    { id: 3, name: 'Espresso', cat: 'Ichimliklar', price: 14000, stock: 12 },
+    { id: 9, name: 'Water 0.5L', cat: 'Ichimliklar', price: 5000, stock: 24 },
+    { id: 4, name: 'Lays Chips', cat: 'Kulolatlar', price: 12000, stock: 18 },
+    { id: 5, name: 'Snickers', cat: 'Kulolatlar', price: 9000, stock: 15 },
+    { id: 10, name: 'Doritos', cat: 'Kulolatlar', price: 10000, stock: 2 },
+    { id: 6, name: 'Burger', cat: 'Issiq ovqat', price: 32000, stock: 8 },
+    { id: 7, name: 'Hot-Dog', cat: 'Issiq ovqat', price: 22000, stock: 6 },
+    { id: 11, name: 'Pizza Slice', cat: 'Issiq ovqat', price: 28000, stock: 4 },
+    { id: 8, name: 'Cheesecake', cat: 'Shirinliklar', price: 25000, stock: 5 },
   ]
 }
 
@@ -303,11 +303,11 @@ export const REFERRAL_CODE = 'ABDU2024'
 export const ZONE_LIST = ['VIP', 'Gaming Pro', 'Standard', 'PS5']
 
 export const ZONE_FILTERS = [
-  { key: 'all', label: 'All' },
+  { key: 'all', label: 'Hammasi' },
   { key: 'VIP', label: 'VIP' },
   { key: 'Gaming Pro', label: 'Gaming Pro' },
   { key: 'Standard', label: 'Standard' },
-  { key: 'PS5', label: 'Console' },
+  { key: 'PS5', label: 'Konsol' },
 ]
 
 export const PEAK_HOURS = [
@@ -325,7 +325,7 @@ export const PEAK_HOURS = [
   { h: '23:00', p: 51 },
 ]
 
-export const BAR_CATEGORIES = ['All', 'Drinks', 'Snacks', 'Hot Food', 'Desserts']
+export const BAR_CATEGORIES = ['Hammasi', 'Ichimliklar', 'Kulolatlar', 'Issiq ovqat', 'Shirinliklar']
 
 export const TEMP_HIGH = 60
 

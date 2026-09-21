@@ -20,17 +20,17 @@ export default function SuperAdminLayout({ children }) {
   const location = useLocation()
 
   const NAV = [
-    { to: '/superadmin', label: 'Dashboard', icon: IconChart, end: true },
-    { to: '/superadmin/finance', label: 'Finance', icon: IconWallet },
-    { to: '/superadmin/staff', label: 'Staff', icon: IconUsers },
-    { to: '/superadmin/promotions', label: 'Promotions', icon: IconGift },
-    { to: '/superadmin/pricing', label: 'Pricing', icon: IconTag },
-    { to: '/superadmin/tournaments', label: 'Tournaments', icon: IconTrophy },
+    { to: '/superadmin', label: 'Boshqaruv', icon: IconChart, end: true },
+    { to: '/superadmin/finance', label: 'Moliya', icon: IconWallet },
+    { to: '/superadmin/staff', label: 'Xodimlar', icon: IconUsers },
+    { to: '/superadmin/promotions', label: 'Aksiyalar', icon: IconGift },
+    { to: '/superadmin/pricing', label: 'Narxlar', icon: IconTag },
+    { to: '/superadmin/tournaments', label: 'Turnirlar', icon: IconTrophy },
   ]
 
   const currentLabel = NAV.find((n) =>
     n.end ? location.pathname === n.to : location.pathname.startsWith(n.to)
-  )?.label || 'Dashboard'
+  )?.label || 'Boshqaruv'
 
   const initials = (user.name || '?')
     .split(' ')
@@ -92,12 +92,12 @@ export default function SuperAdminLayout({ children }) {
           <h1>{currentLabel}</h1>
           <div className="topbar-right">
             <span className="chip chip-green">
-              <IconTrendUp size={14} /> Rev {fmt(SUPER_METRICS.revenue)}
+              <IconTrendUp size={14} /> Dar {fmt(SUPER_METRICS.revenue)}
             </span>
             <span className="chip chip-violet">
-              <IconCrown size={13} /> {fmt(SUPER_METRICS.margin)}% margin
+              <IconCrown size={13} /> {fmt(SUPER_METRICS.margin)}% marja
             </span>
-            <span className="chip chip-accent">{SUPER_METRICS.utilization}% util</span>
+            <span className="chip chip-accent">{SUPER_METRICS.utilization}% band</span>
             <div className="top-avatar">{initials}</div>
           </div>
         </header>
