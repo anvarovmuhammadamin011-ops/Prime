@@ -39,9 +39,11 @@ export default function Map() {
     return c
   }, [machines])
 
+  const STATUS_KEYS = ['available', 'booked', 'maintenance', 'pending']
   const visible = useMemo(() => {
     if (filter === 'all') return machines
     if (filter === 'free') return machines.filter((m) => m.status === 'available')
+    if (STATUS_KEYS.includes(filter)) return machines.filter((m) => m.status === filter)
     return machines.filter((m) => m.zone === filter)
   }, [machines, filter])
 
