@@ -27,12 +27,12 @@ export default function CreateTournament() {
   const handleSubmit = () => {
     if (!form.name || !form.date || !form.startTime) return
     addTournament(form)
-    navigate('/admin/tournaments')
+    navigate('/superadmin/tournaments')
   }
 
   return (
     <div className="page">
-      <button className="btn-back" onClick={() => navigate('/admin/tournaments')}>
+      <button className="btn-back" onClick={() => navigate('/superadmin/tournaments')}>
         ← Turnirlar
       </button>
 
@@ -95,15 +95,16 @@ export default function CreateTournament() {
           </div>
 
           <div className="t-form-group">
-            <label>Jamoa hajmi</label>
+            <label>Jamoa hajmi (bir jamoada necha odam) *</label>
             <input
               type="number"
               className="input"
-              min={2}
+              min={1}
               max={10}
               value={form.teamSize}
-              onChange={(e) => update('teamSize', parseInt(e.target.value) || 5)}
+              onChange={(e) => update('teamSize', parseInt(e.target.value) || 1)}
             />
+            <span className="t-form-hint">Aniq son kiriting: 2, 3, 5 yoki 10</span>
           </div>
 
           <div className="t-form-group">
@@ -173,7 +174,7 @@ export default function CreateTournament() {
           <button className="btn btn-primary" onClick={handleSubmit} disabled={!form.name || !form.date}>
             <IconCheck size={16} /> Yaratish
           </button>
-          <button className="btn btn-secondary" onClick={() => navigate('/admin/tournaments')}>
+          <button className="btn btn-secondary" onClick={() => navigate('/superadmin/tournaments')}>
             <IconX size={16} /> Bekor qilish
           </button>
         </div>

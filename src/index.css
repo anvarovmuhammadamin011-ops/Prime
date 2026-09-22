@@ -3400,6 +3400,23 @@ select:focus {
   flex: 1;
 }
 
+.t-create-success {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.08);
+  border-radius: 12px;
+}
+
+.t-create-success-msg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #34d399;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
 /* Add Player Form */
 .t-add-player-form {
   padding: 16px;

@@ -13,6 +13,7 @@ import {
   IconTeam,
   IconLink,
   IconCrown,
+  IconCopy,
 } from '../../components/Icons.jsx'
 
 export default function TournamentDetail() {
@@ -30,6 +31,8 @@ export default function TournamentDetail() {
 
   const [showCreateTeam, setShowCreateTeam] = useState(false)
   const [teamName, setTeamName] = useState('')
+  const [copied, setCopied] = useState(false)
+  const [justCreated, setJustCreated] = useState(false)
 
   const tournament = tournaments.find((t) => t.id === id)
   if (!tournament) {
@@ -69,7 +72,24 @@ export default function TournamentDetail() {
     createTeamForTournament(tournament.id, teamName.trim(), user.phone, user.name)
     setTeamName('')
     setShowCreateTeam(false)
+    setJustCreated(true)
   }
+
+  const handleCopyInvite = () => {
+    if (!myTeam) return
+    const link = `${window.location.origin}${window.location.pathname}#/join-team/${myTeam.id}`
+    navigator.clipboard.writeText(link).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }).catch(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  const inviteLink = myTeam
+    ? `${window.location.origin}${window.location.pathname}#/join-team/${myTeam.id}`
+    : ''
 
   return (
     <div className="page">
@@ -281,6 +301,24 @@ export default function TournamentDetail() {
                 </button>
               )}
             </div>
+            {myTeam.leaderId === user.phone && (
+              <div className="t-create-success card">
+                {justCreated && (
+                  <p className="t-create-success-msg">
+                    <IconCheck size={16} /> Jamoa yaratildi! Taklif havolangizni do'stlaringizga yuboring
+                  </p>
+                )}
+                <div className="t-invite-link-box">
+                  <input type="text" value={inviteLink} readOnly className="input" />
+                  <button className="btn btn-primary" onClick={handleCopyInvite}>
+                    {copied ? <><IconCheck size={14} /> Nusxalandi</> : <><IconCopy size={14} /> Nusxalash</>}
+                  </button>
+                </div>
+                <p className="muted small">
+                  Havola orqali kirganlar {tournament.teamSize} kishigacha jamoa a'zosi bo'ladi
+                </p>
+              </div>
+            )}
           </div>
         </section>
       )}

@@ -106,7 +106,6 @@ function Routed() {
         <Route path="bar" element={<AdminBar />} />
         <Route path="bookings" element={<AdminBookings />} />
         <Route path="tournaments" element={<AdminTournaments />} />
-        <Route path="tournaments/create" element={<CreateTournament />} />
         <Route path="tournaments/:id/control" element={<TournamentControl />} />
       </Route>
       <Route
@@ -123,6 +122,7 @@ function Routed() {
         <Route path="promotions" element={<SuperPromotions />} />
         <Route path="pricing" element={<SuperPricing />} />
         <Route path="tournaments" element={<SuperTournaments />} />
+        <Route path="tournaments/create" element={<CreateTournament />} />
       </Route>
       <Route
         path="*"

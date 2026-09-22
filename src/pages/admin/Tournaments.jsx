@@ -3,13 +3,13 @@ import { useTournament } from '../../tournament/TournamentContext.jsx'
 import { GAMES, STATUS_LABELS, TOURNAMENT_STATUS, fmt } from '../../data/tournaments.js'
 import {
   IconTrophy,
-  IconPlus,
   IconUsers,
   IconClock,
   IconCoin,
   IconTrash,
   IconPlay,
   IconCheck,
+  IconLock,
 } from '../../components/Icons.jsx'
 
 export default function AdminTournaments() {
@@ -30,9 +30,9 @@ export default function AdminTournaments() {
     <div className="page">
       <div className="t-admin-header">
         <h2>Turnirlar</h2>
-        <button className="btn btn-primary" onClick={() => navigate('/admin/tournaments/create')}>
-          <IconPlus size={16} /> Turnir yaratish
-        </button>
+        <span className="muted small">
+          <IconLock size={13} /> Yangi turnirni Super Admin yaratadi
+        </span>
       </div>
 
       <div className="t-admin-list">

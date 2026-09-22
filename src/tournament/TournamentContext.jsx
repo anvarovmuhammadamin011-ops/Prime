@@ -108,27 +108,30 @@ export function TournamentProvider({ children }) {
       prev.map((t) => {
         if (t.id !== teamId) return t
         if (t.members.some((m) => m.userId === userId)) return t
+        const tournament = tournaments.find((x) => x.id === t.tournamentId)
+        const teamSize = tournament?.teamSize || 5
         const newMembers = [...t.members, { userId, name: userName, joinedAt: new Date().toISOString() }]
-        const tournament = null
         return {
           ...t,
           members: newMembers,
-          isReady: newMembers.length >= 5,
+          isReady: newMembers.length >= teamSize,
         }
       })
     )
-  }, [])
+  }, [tournaments])
 
   const removePlayerFromTeam = useCallback((teamId, userId) => {
     setTeams((prev) =>
       prev.map((t) => {
         if (t.id !== teamId) return t
         if (t.leaderId === userId) return t
+        const tournament = tournaments.find((x) => x.id === t.tournamentId)
+        const teamSize = tournament?.teamSize || 5
         const newMembers = t.members.filter((m) => m.userId !== userId)
-        return { ...t, members: newMembers, isReady: newMembers.length >= 5 }
+        return { ...t, members: newMembers, isReady: newMembers.length >= teamSize }
       })
     )
-  }, [])
+  }, [tournaments])
 
   const markTeamPaid = useCallback((teamId) => {
     setTeams((prev) => prev.map((t) => (t.id === teamId ? { ...t, isPaid: true } : t)))

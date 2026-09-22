@@ -7,6 +7,7 @@ import {
   IconClock,
   IconCoin,
   IconCheck,
+  IconPlus,
 } from '../../components/Icons.jsx'
 
 export default function SuperTournaments() {
@@ -39,6 +40,16 @@ export default function SuperTournaments() {
 
   return (
     <div className="page">
+      <div className="t-admin-header">
+        <h2>Turnirlar</h2>
+        <button
+          className="btn btn-primary"
+          onClick={() => navigate('/superadmin/tournaments/create')}
+        >
+          <IconPlus size={16} /> Turnir yaratish
+        </button>
+      </div>
+
       <section className="t-super-stats">
         {stats.map((s) => {
           const Icon = s.icon
