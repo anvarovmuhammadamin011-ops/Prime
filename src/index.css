@@ -1443,6 +1443,7 @@ p {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
 .machine:hover {
@@ -1460,11 +1461,20 @@ p {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  min-width: 0;
+}
+
+.machine-top .badge {
+  flex-shrink: 0;
 }
 
 .machine-name {
   font-weight: 750;
   font-size: 14px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .machine-price {
@@ -3592,8 +3602,7 @@ select:focus {
   }
 
   .filters {
-    overflow-x: auto;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     padding-bottom: 4px;
   }
 
