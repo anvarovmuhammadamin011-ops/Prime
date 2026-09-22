@@ -121,6 +121,15 @@ export function HallProvider({ children }) {
     }))
   }
 
+  function setBookingDiscount(id, discount) {
+    setState((s) => ({
+      ...s,
+      adminBookings: s.adminBookings.map((x) =>
+        x.id === id ? { ...x, discount: Math.max(0, Math.min(x.amount, discount)) } : x
+      ),
+    }))
+  }
+
   function addProduct(product) {
     setState((s) => ({
       ...s,
@@ -222,6 +231,7 @@ export function HallProvider({ children }) {
     bookFromUser,
     approveBooking,
     rejectBooking,
+    setBookingDiscount,
     addProduct,
     addExpense,
     addPromotion,

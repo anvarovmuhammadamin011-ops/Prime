@@ -123,7 +123,7 @@ const mk = (name, zone, price, cpu, gpu, ram, monitor, status, temp, uptime, pow
 })
 
 export const HALL_STORAGE = 'prime-club-hall'
-export const HALL_VERSION = 5
+export const HALL_VERSION = 6
 
 export function createInitialPricing() {
   return [
@@ -217,6 +217,7 @@ export function createInitialAdminBookings() {
     { id: 106, customer: 'Sarvar Toshmatov', machine: 'GAMING-08', date: iso(1), time: '16:00', hours: 2, amount: 36000, method: 'PAYME', status: 'pending' },
     { id: 109, customer: 'Nodir Jurayev', machine: 'STANDARD-04', date: iso(1), time: '14:00', hours: 2, amount: 20000, method: 'BALANCE', status: 'pending' },
     { id: 110, customer: 'Gulnora Rahimova', machine: 'PS5-01', date: iso(1), time: '19:30', hours: 2, amount: 40000, method: 'CLICK', status: 'pending' },
+    { id: 113, customer: 'Ulug‘bek Xolmatov', machine: 'VIP-02', date: iso(1), time: '17:00', hours: 6, amount: 150000, method: 'PAYME', status: 'pending', discount: 0 },
 
     { id: 111, customer: 'Sardor Qosimov', machine: 'STANDARD-05', date: iso(-4), time: '13:00', hours: 4, amount: 40000, method: 'BALANCE', status: 'rejected' },
     { id: 112, customer: 'Madina Salimova', machine: 'GAMING-05', date: iso(-5), time: '18:30', hours: 2, amount: 36000, method: 'PAYME', status: 'rejected' },

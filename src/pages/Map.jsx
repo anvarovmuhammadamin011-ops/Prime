@@ -33,17 +33,9 @@ export default function Map() {
   const [hours, setHours] = useState(2)
   const [done, setDone] = useState(false)
 
-  const counts = useMemo(() => {
-    const c = { available: 0, booked: 0, maintenance: 0, pending: 0 }
-    for (const m of machines) c[m.status] = (c[m.status] || 0) + 1
-    return c
-  }, [machines])
-
-  const STATUS_KEYS = ['available', 'booked', 'maintenance', 'pending']
   const visible = useMemo(() => {
     if (filter === 'all') return machines
     if (filter === 'free') return machines.filter((m) => m.status === 'available')
-    if (STATUS_KEYS.includes(filter)) return machines.filter((m) => m.status === filter)
     return machines.filter((m) => m.zone === filter)
   }, [machines, filter])
 
@@ -66,25 +58,6 @@ export default function Map() {
 
   return (
     <div className="page">
-      <section className="legend card">
-        {[
-          { key: 'available', label: 'Mavjud', n: counts.available },
-          { key: 'booked', label: 'Band', n: counts.booked },
-          { key: 'maintenance', label: 'Texnik xizmat', n: counts.maintenance },
-          { key: 'pending', label: 'Kutilmoqda', n: counts.pending },
-        ].map((s) => (
-          <button
-            key={s.key}
-            className={`legend-item ${filter === s.key ? 'active' : ''}`}
-            onClick={() => setFilter(filter === s.key ? 'all' : s.key)}
-          >
-            <span className={`dot dot-${s.key}`} />
-            <span>{s.label}</span>
-            <b>{s.n}</b>
-          </button>
-        ))}
-      </section>
-
       <section className="filters">
         {FILTERS.map((f) => (
           <button

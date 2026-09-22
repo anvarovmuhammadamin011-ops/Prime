@@ -1367,36 +1367,6 @@ p {
 
 /* ---------- Map ---------- */
 
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 14px 16px;
-}
-
-.legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 12px;
-  border-radius: 10px;
-  font-size: 13px;
-  color: var(--muted);
-  background: var(--card-2);
-  border: 1px solid transparent;
-  transition: 0.15s;
-}
-
-.legend-item b {
-  color: var(--text);
-}
-
-.legend-item.active {
-  border-color: var(--accent);
-  color: var(--text);
-  background: rgba(124, 92, 255, 0.12);
-}
-
 .dot {
   width: 9px;
   height: 9px;
@@ -2648,6 +2618,72 @@ select:focus {
   border: 1px solid var(--border-soft);
 }
 
+.discount-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(124, 92, 255, 0.08);
+  border: 1px solid var(--border);
+}
+
+.discount-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.discount-head strong {
+  color: var(--text);
+}
+
+.discount-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.discount-input {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: var(--text);
+  font: inherit;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.discount-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.18);
+}
+
+.discount-form .btn,
+.discount-applied .btn {
+  white-space: nowrap;
+}
+
+.discount-applied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.discount-total {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.discount-total .new-total {
+  font-size: 15px;
+}
+
 .method-badge {
   align-self: flex-start;
   padding: 3px 10px;
@@ -3553,20 +3589,6 @@ select:focus {
 
   .machine {
     padding: 10px;
-  }
-
-  .legend {
-    padding: 10px 12px;
-    gap: 6px;
-    overflow-x: auto;
-    flex-wrap: nowrap;
-  }
-
-  .legend-item {
-    padding: 6px 10px;
-    font-size: 12px;
-    white-space: nowrap;
-    flex-shrink: 0;
   }
 
   .filters {
