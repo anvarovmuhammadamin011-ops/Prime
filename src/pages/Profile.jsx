@@ -2,7 +2,15 @@ import { useState } from 'react'
 import { useAuth } from '../auth/AuthContext.jsx'
 import { useClub } from '../club/ClubContext.jsx'
 import { ACHIEVEMENTS, REFERRAL_CODE, fmt } from '../data.js'
-import { IconCoin, IconGift, IconClock, IconCopy, IconCheck, IconLock } from '../components/Icons.jsx'
+import {
+  IconCoin,
+  IconGift,
+  IconClock,
+  IconCalendar,
+  IconCrown,
+  IconCopy,
+  IconCheck,
+} from '../components/Icons.jsx'
 
 export default function Profile() {
   const { user } = useAuth()
@@ -16,6 +24,7 @@ export default function Profile() {
     { icon: IconCoin, label: 'Balans', value: fmt(balance), unit: 'UZS' },
     { icon: IconGift, label: 'Bonus ballar', value: bonus, unit: 'ball' },
     { icon: IconClock, label: "O'ynalgan", value: hours, unit: 'soat' },
+    { icon: IconCalendar, label: 'Bronlar', value: bookings.length, unit: 'ta' },
   ]
 
   const progress = Math.min(100, Math.round((bonus / 100) * 100))
@@ -33,7 +42,9 @@ export default function Profile() {
       ta.remove()
     }
     setCopied(true)
+    setToast('Referral kod nusxalandi')
     setTimeout(() => setCopied(false), 1600)
+    setTimeout(() => setToast(''), 2400)
   }
 
   function handleRedeem() {
@@ -51,21 +62,28 @@ export default function Profile() {
     .join('')
     .toUpperCase()
 
+  const tierCls = user.tier === 'Premium' ? 'premium' : 'standard'
+
   return (
     <div className="page">
       <div className="profile-hero card">
-        <div className="profile-avatar">{initials}</div>
+        <div className="profile-avatar-wrap">
+          <div className="profile-avatar">{initials}</div>
+          <span className="online-dot" />
+        </div>
         <div className="profile-meta">
           <h2>{user.name}</h2>
           <p className="muted">{user.phone}</p>
           <p className="muted small">
-            A&#39;zo bo&#39;lgan sana: {user.joined} · Maqom:
-            <span className={`tier-badge ${user.tier === 'Premium' ? 'premium' : ''}`}> {user.tier}</span>
+            A&#39;zo bo&#39;lgan sana: {user.joined}
           </p>
+          <span className={`tier-badge ${tierCls}`}>
+            <IconCrown size={13} /> {user.tier === 'Premium' ? 'VIP a\u2018zo' : user.tier}
+          </span>
         </div>
       </div>
 
-      <section className="metrics">
+      <section className="metrics profile-stats">
         {metrics.map((m) => {
           const Icon = m.icon
           return (
@@ -85,69 +103,70 @@ export default function Profile() {
         })}
       </section>
 
-      <div className="two-col">
-        <section className="card">
-          <h3 className="section-title">Sodiqlik dasturi</h3>
-          <p className="muted small">
-            Har 100 ball to&#39;plaganingizda <b>15,000 so&#39;m</b>ga almashtirish imkoniyati.
-          </p>
-          <div className="progress-block">
-            <div className="progress-head">
-              <span className="muted small">
-                Keyingi mukofotgacha: {next40} ball
-              </span>
-              <b className="small">
-                {bonus % 100}/100
-              </b>
-            </div>
-            <div className="progress">
-              <span style={{ width: `${Math.min(100, bonus % 100)}%` }} />
-            </div>
+      <section className="card">
+        <div className="loyalty-head">
+          <div>
+            <h3 className="section-title">Sodiqlik dasturi</h3>
+            <p className="muted small">
+              Har 100 ball to&#39;plaganingizda <b>15,000 so&#39;m</b>ga almashtirish imkoniyati.
+            </p>
           </div>
-          <button
-            className={`btn ${bonus >= 100 ? 'btn-primary' : ''} btn-block`}
-            disabled={bonus < 100}
-            onClick={handleRedeem}
-          >
-            Almashtirish · 15,000 so&#39;m
+          <div className="loyalty-pct">
+            <span>{progress}%</span>
+            <b>Bonus</b>
+          </div>
+        </div>
+        <div className="progress-block">
+          <div className="progress-head">
+            <span className="muted small">Keyingi mukofotgacha: {next40} ball</span>
+            <b className="small">{bonus % 100}/100</b>
+          </div>
+          <div className="progress progress-anim">
+            <span style={{ width: `${Math.min(100, bonus % 100)}%` }} />
+          </div>
+        </div>
+        <button
+          className={`btn ${bonus >= 100 ? 'btn-primary' : ''} btn-block`}
+          disabled={bonus < 100}
+          onClick={handleRedeem}
+        >
+          Almashtirish · 15,000 so&#39;m
+        </button>
+
+        <div className="divider" />
+
+        <h3 className="section-title">Do&#39;stni taklif qiling</h3>
+        <p className="muted small">
+          Referral kod orqali taklif qilingan har bir do&#39;st uchun ham siz, ham do&#39;stingiz{' '}
+          <b>20,000 so&#39;m + 100 bonus ball</b> oladi.
+        </p>
+        <div className="referral-row">
+          <code>{REFERRAL_CODE}</code>
+          <button className="btn btn-ghost" onClick={copyCode}>
+            {copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
+            {copied ? 'Nusxalandi' : 'Nusxa olish'}
           </button>
-          {bonus < 100 ? <p className="muted small">Yana {next40} ball to&#39;plang</p> : null}
+        </div>
+      </section>
 
-          <div className="divider" />
-
-          <h3 className="section-title">Do&#39;stni taklif qiling</h3>
-          <p className="muted small">
-            Referral kod orqali taklif qilingan har bir do&#39;st uchun ham siz, ham do&#39;stingiz{' '}
-            <b>20,000 so&#39;m + 100 bonus ball</b> oladi.
-          </p>
-          <div className="referral-row">
-            <code>{REFERRAL_CODE}</code>
-            <button className="btn btn-ghost" onClick={copyCode}>
-              {copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
-              {copied ? 'Nusxalandi' : 'Nusxa olish'}
-            </button>
-          </div>
-        </section>
-
-        <section className="card">
-          <h3 className="section-title">Yutuqlar</h3>
-          <div className="ach-grid">
-            {ACHIEVEMENTS.map((a) => (
-              <div key={a.id} className={`ach ${a.earned ? 'earned' : 'locked'}`}>
-                <div className="ach-icon">
-                  {a.earned ? <IconCheck size={20} /> : <IconLock size={18} />}
-                </div>
-                <strong>{a.title}</strong>
-                <span className="muted small">{a.desc}</span>
-                {a.progress ? <span className="ach-progress">{a.progress}</span> : null}
-                <span className={`badge ${a.earned ? 'st-available' : 'st-booked'}`}>
-                  {a.earned ? 'Ochilgan' : 'Yopiq'}
-                </span>
+      <section className="card">
+        <h3 className="section-title">Yutuqlar</h3>
+        <div className="ach-grid">
+          {ACHIEVEMENTS.map((a) => (
+            <div key={a.id} className={`ach ${a.earned ? 'earned' : 'locked'}`}>
+              <div className="ach-icon">
+                <span>{a.emoji}</span>
               </div>
-            ))}
-          </div>
-        </section>
-      </div>
+              <strong>{a.title}</strong>
+              <span className="muted small">{a.desc}</span>
+              {a.progress ? <span className="ach-progress">{a.progress}</span> : null}
+              <span className={`badge ${a.earned ? 'st-available' : 'st-booked'}`}>
+                {a.earned ? 'Ochilgan' : 'Yopiq'}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <section className="card">
         <h3 className="section-title">Bron tarixi</h3>
@@ -166,15 +185,19 @@ export default function Profile() {
               <tbody>
                 {bookings.map((b) => (
                   <tr key={b.id}>
-                    <td>
+                    <td data-label="Joy / Zona">
                       <b>{b.machine}</b>
                     </td>
-                    <td className="muted">
+                    <td data-label="Sana va vaqt" className="muted">
                       {b.date} · {b.time}
                     </td>
-                    <td className="muted">{b.hours} soat</td>
-                    <td>{fmt(b.price)} so&#39;m</td>
-                    <td>
+                    <td data-label="Davomiylik" className="muted">
+                      {b.hours} soat
+                    </td>
+                    <td data-label="Narx">
+                      {fmt(b.price)} so&#39;m
+                    </td>
+                    <td data-label="Holat">
                       <span
                         className={`badge ${b.status === 'confirmed' ? 'st-available' : 'st-pending'}`}
                       >

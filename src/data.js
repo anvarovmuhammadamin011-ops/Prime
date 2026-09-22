@@ -302,10 +302,10 @@ export function createInitialBookings() {
 }
 
 export const ACHIEVEMENTS = [
-  { id: 'first', title: 'Birinchi bron', desc: 'Ilk bor joy band qilindi', earned: true, progress: null },
-  { id: '100h', title: '100 soat', desc: 'Jami 100 soat o\u2018ynaldi', earned: true, progress: '184 / 100' },
-  { id: 'vip', title: 'VIP mijoz', desc: 'VIP zonadan foydalanildi', earned: true, progress: null },
-  { id: 'marafon', title: 'Marafon', desc: '12 soat uzluksiz sessiya', earned: false, progress: '6 / 12' },
+  { id: 'first', title: 'Birinchi bron', desc: 'Ilk bor joy band qilindi', emoji: '🎮', earned: true, progress: null },
+  { id: '100h', title: '100 soat', desc: 'Jami 100 soat o\u2018ynaldi', emoji: '⏱️', earned: true, progress: '184 / 100' },
+  { id: 'vip', title: 'VIP mijoz', desc: 'VIP zonadan foydalanildi', emoji: '👑', earned: true, progress: null },
+  { id: 'marafon', title: 'Marafon', desc: '12 soat uzluksiz sessiya', emoji: '🏆', earned: false, progress: '6 / 12' },
 ]
 
 export const REFERRAL_CODE = 'ABDU2024'
