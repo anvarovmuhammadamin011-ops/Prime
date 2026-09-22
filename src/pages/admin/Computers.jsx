@@ -9,6 +9,7 @@ import {
   IconPlus,
   IconMinus,
   IconX,
+  IconBolt,
 } from '../../components/Icons.jsx'
 
 const STATUS_CLASS = {

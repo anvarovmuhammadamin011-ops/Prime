@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom'
+import { useLocation, Outlet } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext.jsx'
 import { fmt, SUPER_METRICS } from '../data.js'
 import {
@@ -15,7 +15,7 @@ import {
 } from './Icons.jsx'
 import SuperAdminMobileNav from './SuperAdminMobileNav.jsx'
 
-export default function SuperAdminLayout({ children }) {
+export default function SuperAdminLayout() {
   const { user, logout } = useAuth()
   const location = useLocation()
 
@@ -102,7 +102,9 @@ export default function SuperAdminLayout({ children }) {
           </div>
         </header>
 
-        <main className="content">{children}</main>
+        <main className="content">
+          <Outlet />
+        </main>
       </div>
 
       <SuperAdminMobileNav />

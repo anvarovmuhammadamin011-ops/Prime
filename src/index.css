@@ -378,6 +378,22 @@ p {
   font-size: 15px;
 }
 
+.btn-sm {
+  padding: 8px 14px;
+  font-size: 13px;
+}
+
+.btn-secondary {
+  background: var(--card-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: rgba(124, 92, 255, 0.06);
+}
+
 /* ---------- Session ---------- */
 
 .session-page {
@@ -542,6 +558,20 @@ p {
 
 .session-finished strong {
   font-size: 26px;
+}
+
+.session-game {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  padding: 7px 12px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  color: var(--muted);
+  background: var(--card-2);
+  border: 1px solid var(--border);
 }
 
 .s-empty {
@@ -751,6 +781,24 @@ p {
   flex-direction: column;
   gap: 7px;
   margin-bottom: 16px;
+}
+
+.input {
+  display: block;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text);
+  outline: none;
+  width: 100%;
+  font: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.18);
 }
 
 .field > span {
@@ -1848,6 +1896,42 @@ p {
   color: var(--accent-2);
   background: rgba(0, 229, 255, 0.08);
   border: 1px solid rgba(0, 229, 255, 0.2);
+}
+
+.admin-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  align-items: center;
+}
+
+.admin-summary-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border-soft);
+}
+
+.summary-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.admin-summary-item b {
+  margin-left: auto;
+  font-size: 15px;
+}
+
+.admin-summary-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  padding: 2px 0;
 }
 
 .group-actions {
@@ -3218,6 +3302,10 @@ select:focus {
     display: none;
   }
 
+  nav.mobile-nav {
+    display: flex;
+  }
+
   .topbar {
     padding: 12px 16px;
   }
@@ -3278,7 +3366,12 @@ select:focus {
 
   .two-col,
   .map-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .two-col > *,
+  .map-layout > * {
+    min-width: 0;
   }
 
   .details {
@@ -3397,6 +3490,42 @@ select:focus {
   .form-panel {
     padding: 24px 16px;
   }
+
+  .t-control-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .t-super-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .t-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .t-form-full {
+    grid-column: span 1;
+  }
+
+  .t-admin-header,
+  .group-head,
+  .t-super-row,
+  .t-super-row-meta,
+  .t-admin-team-row,
+  .order-row,
+  .zone-row,
+  .zone-actions,
+  .t-actions,
+  .t-form-actions,
+  .t-my-team-footer,
+  .t-team-card-footer {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .t-podium {
+    flex-wrap: wrap;
+  }
 }
 
 @media (max-width: 560px) {
@@ -3424,6 +3553,90 @@ select:focus {
   .modal {
     margin: 10px;
     max-width: calc(100% - 20px);
+  }
+
+  .t-control-stats,
+  .t-super-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .t-podium {
+    gap: 10px;
+    padding: 0;
+  }
+
+  .t-podium-card {
+    padding: 18px 12px;
+  }
+
+  .t-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .peak-chart {
+    overflow-x: auto;
+  }
+}
+
+/* ---------- Extra small phones ---------- */
+
+@media (max-width: 420px) {
+  .content {
+    padding: 12px;
+  }
+
+  .topbar {
+    padding: 10px 12px;
+  }
+
+  .topbar h1 {
+    font-size: 15px;
+  }
+
+  .upcoming-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .t-podium {
+    gap: 8px;
+    padding: 0;
+  }
+
+  .t-podium-card {
+    padding: 14px 8px;
+  }
+
+  .t-podium-medal {
+    font-size: 28px;
+  }
+
+  .t-podium-team {
+    font-size: 13px;
+  }
+
+  .t-invite-link-box {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .t-invite-link-box .btn {
+    width: 100%;
+  }
+
+  .t-team-card-footer,
+  .t-my-team-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .t-team-card-footer .btn {
+    width: 100%;
+  }
+
+  .booking-head {
+    flex-direction: column;
   }
 }
 
@@ -5103,6 +5316,8 @@ select:focus {
 
 .mobile-nav {
   display: none;
+  flex-direction: row;
+  align-items: stretch;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -5117,6 +5332,7 @@ select:focus {
 
 .mobile-nav-item {
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
   gap: 3px;

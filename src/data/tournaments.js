@@ -51,16 +51,12 @@ export const ROUND_NAMES = {
 }
 
 export function getRoundName(round, totalRounds) {
-  const diff = totalRounds - round
-  if (diff === totalRounds) return '1-tur'
-  if (diff === totalRounds - 1) return 'Chorak final'
-  if (diff === totalRounds - 2) return 'Yarim final'
-  if (round === totalRounds) return 'Final'
-  return `Tur ${round}`
+  const fromEnd = totalRounds - round
+  if (fromEnd <= 0) return 'Final'
+  if (fromEnd === 1) return 'Yarim final'
+  if (fromEnd === 2) return 'Chorak final'
+  return `${round + 1}-tur`
 }
-
-let nextTeamId = 1000
-let nextMatchId = 1000
 
 export function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 7)
@@ -90,7 +86,7 @@ export function createTournament(data) {
 
 export function createTeam(tournamentId, name, leaderId, leaderName) {
   return {
-    id: `team-${nextTeamId++}`,
+    id: `team-${generateId()}`,
     tournamentId,
     name,
     leaderId,
@@ -104,7 +100,7 @@ export function createTeam(tournamentId, name, leaderId, leaderName) {
 
 export function createMatch(tournamentId, round, matchIndex, teamA, teamB) {
   return {
-    id: `match-${nextMatchId++}`,
+    id: `match-${generateId()}`,
     tournamentId,
     round,
     matchIndex,

@@ -78,13 +78,24 @@ export default function TournamentDetail() {
   const handleCopyInvite = () => {
     if (!myTeam) return
     const link = `${window.location.origin}${window.location.pathname}#/join-team/${myTeam.id}`
-    navigator.clipboard.writeText(link).then(() => {
+    try {
+      navigator.clipboard.writeText(link).then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      }).catch(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      })
+    } catch {
+      const ta = document.createElement('textarea')
+      ta.value = link
+      document.body.appendChild(ta)
+      ta.select()
+      document.execCommand('copy')
+      ta.remove()
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
-    }).catch(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    })
+    }
   }
 
   const inviteLink = myTeam

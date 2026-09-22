@@ -45,13 +45,24 @@ export default function TeamDetail() {
   const inviteLink = `${window.location.origin}${window.location.pathname}#/join-team/${team.id}`
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(inviteLink).then(() => {
+    try {
+      navigator.clipboard.writeText(inviteLink).then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      }).catch(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      })
+    } catch {
+      const ta = document.createElement('textarea')
+      ta.value = inviteLink
+      document.body.appendChild(ta)
+      ta.select()
+      document.execCommand('copy')
+      ta.remove()
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
-    }).catch(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    })
+    }
   }
 
   const handleAddPlayer = () => {

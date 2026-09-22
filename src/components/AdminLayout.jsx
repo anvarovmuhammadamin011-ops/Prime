@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom'
+import { useLocation, Outlet } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext.jsx'
 import { useHall } from '../hall/HallContext.jsx'
 import { fmt } from '../data.js'
@@ -15,7 +15,7 @@ import {
 } from './Icons.jsx'
 import AdminMobileNav from './AdminMobileNav.jsx'
 
-export default function AdminLayout({ children }) {
+export default function AdminLayout() {
   const { user, logout } = useAuth()
   const hall = useHall()
   const location = useLocation()
@@ -111,7 +111,9 @@ export default function AdminLayout({ children }) {
           </div>
         </header>
 
-        <main className="content">{children}</main>
+        <main className="content">
+          <Outlet />
+        </main>
       </div>
 
       <AdminMobileNav />
