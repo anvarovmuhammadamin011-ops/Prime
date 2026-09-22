@@ -1,4 +1,4 @@
-﻿﻿﻿import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useHall } from '../../hall/HallContext.jsx'
 import { ZONE_FILTERS, STATUS_LABELS, TEMP_HIGH, ZONE_LABELS, fmt } from '../../data.js'
 import {
@@ -89,6 +89,29 @@ export default function AdminComputers() {
             </div>
           </div>
         ))}
+      </section>
+
+      <section className="admin-summary card">
+        {[
+          { key: 'available', label: 'Bo\'sh', color: '#34d399' },
+          { key: 'pending', label: 'Zaxira', color: '#fbbf24' },
+          { key: 'booked', label: 'Band', color: '#f87171' },
+          { key: 'maintenance', label: 'Nosoz', color: '#fb923c' },
+        ].map((s) => {
+          const n = hall.machines.filter((m) => m.status === s.key).length
+          return (
+            <div className="admin-summary-item" key={s.key}>
+              <span className="summary-dot" style={{ background: s.color }} />
+              <span className="muted small">{s.label}</span>
+              <b>{n}</b>
+            </div>
+          )
+        })}
+        <div className="admin-summary-actions">
+          <button className="btn btn-ghost small" onClick={() => notify('Barcha zonalar yangilandi')}>
+            <IconBolt size={14} /> Yangilash
+          </button>
+        </div>
       </section>
 
       <section className="filters">

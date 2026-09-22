@@ -2,6 +2,16 @@ export const BRAND = 'PRIME CLUB'
 
 export const fmt = (n) => new Intl.NumberFormat('en-US').format(n)
 
+export const XP_PER_LEVEL = 1000
+export const XP_PER_HOUR = 65
+
+export function levelFor(hours) {
+  const totalXp = Math.round((hours || 0) * XP_PER_HOUR)
+  const level = Math.floor(totalXp / XP_PER_LEVEL) + 1
+  const cur = totalXp % XP_PER_LEVEL
+  return { level, cur, total: XP_PER_LEVEL, totalXp }
+}
+
 export const REGISTERED_STORAGE = 'prime-registered'
 
 export const USERS = {

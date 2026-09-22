@@ -1,16 +1,17 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext.jsx'
 import { useClub } from '../club/ClubContext.jsx'
-import { useHall } from '../hall/HallContext.jsx'
-import { FAVORITES, STATUS_LABELS, fmt } from '../data.js'
+import { useTournament } from '../tournament/TournamentContext.jsx'
+import { FAVORITES, STATUS_LABELS, fmt, levelFor } from '../data.js'
+import { GAMES, TOURNAMENT_STATUS } from '../data/tournaments.js'
 import {
+  IconDesktop,
+  IconTrophy,
+  IconCalendar,
   IconCoin,
-  IconGift,
   IconClock,
-  IconMap,
   IconBolt,
   IconCrown,
-  IconCheck,
 } from '../components/Icons.jsx'
 
 const STATUS_BADGE = {
@@ -23,120 +24,141 @@ const STATUS_BADGE = {
 export default function Home() {
   const { user } = useAuth()
   const { machines, bookings, balance, bonus, availableCount, totalCount } = useClub()
-  const { pricing } = useHall()
+  const { tournaments } = useTournament()
   const navigate = useNavigate()
 
-  const heroes = [
-    { icon: IconCoin, label: 'Balans', value: fmt(balance), unit: 'UZS', sub: 'Hisobingizdagi mablag\u2018' },
-    { icon: IconGift, label: 'Bonus ballar', value: bonus, unit: 'ball', sub: '100 ball = 15,000 so\u2018m' },
-    { icon: IconClock, label: "O'ynalgan soat", value: user.hours ?? 184, unit: 'soat', sub: 'Jami o\u2018yin vaqti' },
-    { icon: IconMap, label: "Bo'sh kompyuter", value: `${availableCount} / ${totalCount}`, unit: '', sub: 'Hozir bo\u2018sh o\u2018rinlar' },
-  ]
+  const first = (user.name || '').trim().split(' ')[0] || 'mehmon'
+  const lvl = levelFor(user.hours ?? 0)
+  const levelPct = Math.min(100, Math.round((lvl.cur / lvl.total) * 100))
 
   const favorites = FAVORITES.map((id) => machines.find((m) => m.id === id)).filter(Boolean)
 
+  const upcoming = tournaments
+    .filter((t) => t.status === TOURNAMENT_STATUS.registration || t.status === TOURNAMENT_STATUS.upcoming)
+    .sort((a, b) => (a.date || '').localeCompare(b.date || ''))[0]
+
+  const nextBooking = bookings.find((b) => b.status === 'confirmed')
+
+  const qa = [
+    { to: '/map', label: 'PC', sub: 'Bron qilish', icon: IconDesktop, cls: 'qa-violet' },
+    { to: '/tournaments', label: 'Turnir', sub: "Ro'yxatdan o'tish", icon: IconTrophy, cls: 'qa-blue' },
+    { to: '/map', label: 'Bron', sub: 'Joy band qilish', icon: IconCalendar, cls: 'qa-green' },
+    { to: '/profile', label: 'Bar & Bonus', sub: 'Balans va ballar', icon: IconCoin, cls: 'qa-cyan' },
+  ]
+
   return (
-    <div className="page">
-      <section className="welcome card">
+    <div className="page home-page">
+      <section className="home-hello">
         <div>
-          <p className="welcome-kicker">
-            <span className="live-dot" /> Hozir {availableCount} ta joy bo&#39;sh (jami {totalCount})
+          <p className="home-kicker">
+            <span className="live-dot" /> PRIME GAME CLUB
           </p>
           <h2>
-            Xush kelibsiz, <span className="grad-text">{user.name}</span>!
+            Salom, <span className="grad-text">{first}</span> 👋
           </h2>
-          <p className="muted">Bugun qaysi zonada o&#39;ynashni xohlaysiz?</p>
+          <p className="muted">Bugun nima o'ynaymiz?</p>
         </div>
-        <button className="btn btn-primary" onClick={() => navigate('/map')}>
-          Hoziroq bron qiling
-        </button>
+        <div className="top-avatar profile-avatar" onClick={() => navigate('/profile')}>
+          {user.name.split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase()}
+        </div>
       </section>
 
-      <section className="metrics">
-        {heroes.map((h) => {
-          const Icon = h.icon
-          return (
-            <div className="metric card" key={h.label}>
-              <div className="metric-icon">
+      <button className="home-hero card" onClick={() => navigate('/map')}>
+        <div className="home-hero-icon">
+          <IconDesktop size={30} />
+        </div>
+        <div className="home-hero-info">
+          <p className="home-hero-count">
+            {availableCount} ta PC <span className="muted">bo'sh</span>
+          </p>
+          <p className="home-hero-sub">
+            <span className="home-open-dot" /> Club ochiq · 24/7
+          </p>
+        </div>
+        <div className="home-hero-cta">
+          <IconBolt size={18} />
+          <span>BOOK PC</span>
+        </div>
+      </button>
+
+      <section>
+        <h3 className="section-title">Tezkor harakatlar</h3>
+        <div className="qa-grid">
+          {qa.map((q) => {
+            const Icon = q.icon
+            return (
+              <button className={`qa-card ${q.cls}`} key={q.label} onClick={() => navigate(q.to)}>
                 <Icon size={22} />
-              </div>
-              <div>
-                <p className="metric-label">{h.label}</p>
-                <p className="metric-value">
-                  {h.value}
-                  {h.unit ? <span className="metric-unit"> {h.unit}</span> : null}
-                </p>
-                <p className="muted small">{h.sub}</p>
-              </div>
-            </div>
-          )
-        })}
-      </section>
-
-      <section className="quick card">
-        <h3 className="section-title">Tezkor o&#39;tish</h3>
-        <div className="quick-grid">
-          <button className="quick-item" onClick={() => navigate('/map')}>
-            <div className="quick-icon accent1">
-              <IconMap size={22} />
-            </div>
-            <div>
-              <strong>Interaktiv xarita</strong>
-              <span>Zaldagi kompyuterlar joylashuvi</span>
-            </div>
-          </button>
-          <button className="quick-item" onClick={() => navigate('/map')}>
-            <div className="quick-icon accent2">
-              <IconBolt size={22} />
-            </div>
-            <div>
-              <strong>Bron qilish</strong>
-              <span>3 bosqichli tezkor joy band qilish</span>
-            </div>
-          </button>
-          <button className="quick-item" onClick={() => navigate('/profile')}>
-            <div className="quick-icon accent3">
-              <IconGift size={22} />
-            </div>
-            <div>
-              <strong>Sodiqlik dasturi</strong>
-              <span>Ballarni pulga almashtirish</span>
-            </div>
-          </button>
+                <strong>{q.label}</strong>
+                <span>{q.sub}</span>
+              </button>
+            )
+          })}
         </div>
       </section>
 
-      <section className="pricing card">
-        <div className="pricing-head">
-          <h3 className="section-title">Narxlar va tariflar</h3>
-          <span className="muted small">so&#39;m / soat</span>
-        </div>
-        <div className="pricing-grid">
-          {pricing.map((p) => (
-            <div className="price-card" key={p.key}>
-              <div className="price-top">
-                <span className="zone-badge">{p.badge}</span>
-                {p.key === 'VIP' ? <IconCrown size={16} /> : null}
-              </div>
-              <h4>{p.label}</h4>
-              <p className="price-val">
-                <span className="grad-text">{fmt(p.price)}</span>
-                <span className="muted small"> / soat</span>
-              </p>
-              <ul className="spec-list">
-                {p.specs.map((s) => (
-                  <li key={s}>
-                    <span className="dot-check">
-                      <IconCheck size={12} />
-                    </span>
-                    {s}
-                  </li>
-                ))}
-              </ul>
+      {upcoming && (
+        <section className="upcoming card">
+          <div className="upcoming-head">
+            <span className="t-game-badge">{GAMES.find((g) => g.id === upcoming.game)?.name || upcoming.game}</span>
+            <span className="upcoming-tag">UPCOMING</span>
+          </div>
+          <h3 className="upcoming-title">🏆 {upcoming.name}</h3>
+          <div className="upcoming-meta">
+            <span><IconClock size={14} /> {upcoming.date} · {upcoming.startTime}</span>
+            <span className="upcoming-teams">{upcoming.maxTeams} ta jamoa</span>
+          </div>
+          {upcoming.prizePool > 0 && (
+            <div className="upcoming-prize">
+              <IconCrown size={15} /> {fmt(upcoming.prizePool)} so'm sovrin
             </div>
-          ))}
+          )}
+          <button className="btn btn-primary btn-block" onClick={() => navigate(`/tournaments/${upcoming.id}`)}>
+            Ko'rish →
+          </button>
+        </section>
+      )}
+
+      <section className="activity card">
+        <div className="activity-head">
+          <h3 className="section-title">Sizning faolligingiz</h3>
+          <span className="activity-level">LEVEL {lvl.level}</span>
+        </div>
+        <div className="activity-stats">
+          <div>
+            <strong>{(user.hours ?? 0)}h</strong>
+            <span className="muted small">O'ynalgan</span>
+          </div>
+          <div>
+            <strong>{fmt(balance)}</strong>
+            <span className="muted small">Balans · UZS</span>
+          </div>
+          <div>
+            <strong>{bonus}</strong>
+            <span className="muted small">Bonus ball</span>
+          </div>
+        </div>
+        <div className="level-bar">
+          <div className="level-bar-head">
+            <span className="muted small">{fmt(lvl.cur)} / {fmt(lvl.total)} XP</span>
+            <span className="muted small">LEVEL {lvl.level} → {lvl.level + 1}</span>
+          </div>
+          <div className="progress">
+            <span style={{ width: `${levelPct}%` }} />
+          </div>
         </div>
       </section>
+
+      {nextBooking && (
+        <button className="home-session card" onClick={() => navigate('/session')}>
+          <div>
+            <p className="home-session-label">Keyingi sessiya</p>
+            <strong>{nextBooking.machine}</strong>
+            <p className="muted small">{nextBooking.date} · {nextBooking.time}</p>
+          </div>
+          <span className="badge st-available">Tasdiqlangan</span>
+        </button>
+      )}
 
       <div className="two-col">
         <section className="card">
@@ -148,7 +170,7 @@ export default function Home() {
                   <button className="fav-main" onClick={() => navigate('/map')}>
                     <strong>{m.name}</strong>
                     <span className="muted small">
-                      {m.zone} · {fmt(m.price)} so&#39;m/soat
+                      {m.zone} · {fmt(m.price)} so'm/soat
                     </span>
                   </button>
                   <span className={`badge ${STATUS_BADGE[m.status]}`}>{STATUS_LABELS[m.status]}</span>
@@ -156,7 +178,7 @@ export default function Home() {
               ))}
             </ul>
           ) : (
-            <p className="muted">Sevimlilar yo&#39;q</p>
+            <p className="muted">Sevimlilar yo'q</p>
           )}
         </section>
 
@@ -164,7 +186,7 @@ export default function Home() {
           <h3 className="section-title">Mening bronlarim</h3>
           {bookings.length ? (
             <ul className="book-list">
-              {bookings.map((b) => (
+              {bookings.slice(0, 3).map((b) => (
                 <li key={b.id} className="book-row">
                   <div className="book-date">
                     <strong>{b.date.slice(8, 10)}</strong>
@@ -177,7 +199,7 @@ export default function Home() {
                     </span>
                   </div>
                   <div className="book-right">
-                    <span className="muted small">{fmt(b.price)} so&#39;m</span>
+                    <span className="muted small">{fmt(b.price)} so'm</span>
                     <span className={`badge ${b.status === 'confirmed' ? 'st-available' : 'st-pending'}`}>
                       {b.status === 'confirmed' ? 'Tasdiqlangan' : 'Kutilmoqda'}
                     </span>
@@ -186,7 +208,7 @@ export default function Home() {
               ))}
             </ul>
           ) : (
-            <p className="muted">Bronlar yo&#39;q</p>
+            <p className="muted">Bronlar yo'q</p>
           )}
         </section>
       </div>

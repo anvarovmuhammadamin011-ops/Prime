@@ -17,6 +17,7 @@ import JoinTeam from './pages/user/JoinTeam.jsx'
 import TournamentBracket from './pages/user/TournamentBracket.jsx'
 import TournamentWinners from './pages/user/TournamentWinners.jsx'
 import MyTeams from './pages/user/MyTeams.jsx'
+import Session from './pages/user/Session.jsx'
 import AdminDashboard from './pages/admin/Dashboard.jsx'
 import AdminComputers from './pages/admin/Computers.jsx'
 import AdminBar from './pages/admin/Bar.jsx'
@@ -92,6 +93,7 @@ function Routed() {
         <Route path="/tournaments/team/:teamId" element={<TeamDetail />} />
         <Route path="/join-team/:teamId" element={<JoinTeam />} />
         <Route path="/my-teams" element={<MyTeams />} />
+        <Route path="/session" element={<Session />} />
       </Route>
       <Route
         path="/admin"
