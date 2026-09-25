@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: prime_club
+      POSTGRES_USER: prime
+      POSTGRES_PASSWORD: prime
+    volumes:
+      - prime-club-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U prime -d prime_club"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://prime:prime@db:5432/prime_club
+      NODE_ENV: development
+      RUN_EXPIRATION_WORKER: "false"
+    command: ["sh", "-c", "npm run db:migrate && node server/index.js"]
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+    restart: unless-stopped
+
+  worker:
+    build: .
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://prime:prime@db:5432/prime_club
+      NODE_ENV: development
+    command: ["node", "server/worker.js"]
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  prime-club-postgres:

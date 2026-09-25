@@ -1,150 +1,254 @@
-import { useHall } from '../../hall/HallContext.jsx'
-import { PEAK_HOURS, TEMP_HIGH, fmt } from '../../data.js'
-import { IconCoin, IconClock, IconCart, IconGift } from '../../components/Icons.jsx'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../../auth/AuthContext.jsx'
+import { useClub } from '../../club/ClubContext.jsx'
+import { BOOKING_STATUS, SESSION_STATUS } from '../../club/bookingRules.js'
+import { PC_STATUS_CLASSES, PC_STATUS_LABELS, formatHms, formatTime } from '../../data.js'
+import {
+  IconCalendar,
+  IconCheck,
+  IconClock,
+  IconDesktop,
+  IconPower,
+  IconUsers,
+  IconX,
+} from '../../components/Icons.jsx'
 
 export default function AdminDashboard() {
-  const hall = useHall()
+  const { users } = useAuth()
+  const {
+    state,
+    pcRows,
+    activeCount,
+    availableCount,
+    totalCount,
+    todayBookings,
+    todaySessions,
+    todayUsers,
+    now,
+    startSession,
+  } = useClub()
+  const [code, setCode] = useState('')
+  const [message, setMessage] = useState(null)
+  const [starting, setStarting] = useState(false)
 
-  const metrics = [
-    {
-      icon: IconClock,
-      label: 'Faol seanslar',
-      value: `${hall.bookedCount}/${hall.totalCount}`,
-      sub: 'Hozirda band kompyuterlar',
-    },
-    {
-      icon: IconGift,
-      label: 'Mavjud',
-      value: hall.availableCount,
-      sub: 'Foydalanishga tayyor',
-    },
-    {
-      icon: IconCart,
-      label: 'Kutilayotgan bronlar',
-      value: hall.adminBookings.filter((b) => b.status === 'pending').length,
-      sub: 'Tasdiqlash kutilmoqda',
-    },
-    {
-      icon: IconCoin,
-      label: 'Bar daromadi',
-      value: fmt(hall.barRevenue),
-      unit: ' UZS',
-      sub: "Bugungi bar tushumi",
-    },
-  ]
+  const pending = todayBookings
+    .filter((booking) => booking.status === BOOKING_STATUS.PENDING)
+    .sort((a, b) => a.startAt - b.startAt)
+  const activeSessions = state.sessions.filter(
+    (session) =>
+      session.status === SESSION_STATUS.ACTIVE && session.startedAt <= now && session.endsAt > now,
+  )
 
-  const highTemp = hall.machines
-    .filter((m) => m.temp >= TEMP_HIGH)
-    .sort((a, b) => b.temp - a.temp)
+  function userFor(session) {
+    return users.find((item) => item.id === session.userId) || {
+      name: session.userName,
+      phone: session.userPhone,
+    }
+  }
 
-  const park = [
-    { key: 'available', label: 'Mavjud', n: hall.availableCount },
-    { key: 'booked', label: 'Band', n: hall.bookedCount },
-    { key: 'maintenance', label: 'Texnik xizmat', n: hall.maintenanceCount },
-    { key: 'pending', label: 'Kutilmoqda', n: hall.pendingMachined },
-  ]
+  function pcNumber(pcId) {
+    return Number(pcRows.find((pc) => pc.id === pcId)?.number) || 0
+  }
 
-  const pending = hall.adminBookings.filter((b) => b.status === 'pending')
+  async function handleStart(event) {
+    event.preventDefault()
+    setStarting(true)
+    const result = await startSession(code)
+    setStarting(false)
+    if (!result.ok) {
+      setMessage({ type: 'error', text: result.error })
+      return
+    }
+    setMessage({
+      type: 'success',
+      text: `PC-${String(result.session.pcNumber || pcNumber(result.session.pcId)).padStart(2, '0')} sessiyasi boshlandi`,
+    })
+    setCode('')
+  }
 
   return (
-    <div className="page">
-      <section className="metrics">
-        {metrics.map((h) => {
-          const Icon = h.icon
-          return (
-            <div className="metric card" key={h.label}>
-              <div className="metric-icon">
-                <Icon size={22} />
-              </div>
-              <div>
-                <p className="metric-label">{h.label}</p>
-                <p className="metric-value">
-                  {h.value}
-                  {h.unit ? <span className="metric-unit"> {h.unit}</span> : null}
-                </p>
-                <p className="muted small">{h.sub}</p>
-              </div>
-            </div>
-          )
-        })}
+    <div className="page admin-dashboard">
+      <section className="admin-welcome">
+        <div>
+          <span className="eyebrow">Bugungi holat</span>
+          <h1>PC va sessiyalar markazi</h1>
+          <p className="muted">Faqat tasdiqlash, kod kiritish va holatni nazorat qiling.</p>
+        </div>
+        <Link className="button primary" to="/admin/bookings">
+          <IconCalendar size={18} /> Bronlarni ko‘rish
+        </Link>
       </section>
 
-      <div className="two-col">
-        <section className="card">
-          <h3 className="section-title">Yuqori soatlar</h3>
-          <p className="muted small">Kun davomidagi zal bandligi (%)</p>
-          <div className="peak-chart">
-            {PEAK_HOURS.map((x) => (
-              <div className="peak-col" key={x.h}>
-                <span className={`peak-val ${x.p >= 90 ? 'high' : ''}`}>{x.p}%</span>
-                <div className={`peak-bar ${x.p >= 90 ? 'high' : ''}`} style={{ height: `${x.p}%` }} />
-                <span className="peak-label">{x.h}</span>
-              </div>
-            ))}
+      <section className="admin-metrics">
+        <div className="metric-card card">
+          <span className="metric-icon violet"><IconCalendar size={20} /></span>
+          <div>
+            <span>Bugungi bronlar</span>
+            <strong>{todayBookings.length}</strong>
           </div>
+        </div>
+        <div className="metric-card card">
+          <span className="metric-icon red"><IconPower size={20} /></span>
+          <div>
+            <span>Hozir ishlayapti</span>
+            <strong>{activeCount}</strong>
+          </div>
+        </div>
+        <div className="metric-card card">
+          <span className="metric-icon green"><IconUsers size={20} /></span>
+          <div>
+            <span>Bugungi foydalanuvchilar</span>
+            <strong>{todayUsers}</strong>
+          </div>
+        </div>
+        <div className="metric-card card">
+          <span className="metric-icon blue"><IconClock size={20} /></span>
+          <div>
+            <span>Bugungi sessiyalar</span>
+            <strong>{todaySessions.length}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section className="start-session-panel">
+        <div className="start-session-copy">
+          <span className="live-label">
+            <span className="status-dot active" /> Sessiyani boshlash
+          </span>
+          <h2>Foydalanuvchi kodini kiriting</h2>
+          <p>Kod tasdiqlangan bron bilan bog‘langan va bir marta ishlatiladi.</p>
+        </div>
+        <form className="start-code-form" onSubmit={handleStart}>
+          <input
+            value={code}
+            onChange={(event) => setCode(event.target.value.replace(/\D/g, '').slice(0, 6))}
+            placeholder="000000"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            aria-label="Kirish kodi"
+          />
+          <button className="button primary" type="submit" disabled={starting || code.length !== 6}>
+            <IconPower size={18} /> {starting ? 'Boshlanmoqda...' : 'Boshlash'}
+          </button>
+        </form>
+        {message ? (
+          <div className={`session-message ${message.type}`}>
+            {message.type === 'success' ? <IconCheck size={17} /> : <IconX size={17} />}
+            {message.text}
+          </div>
+        ) : null}
+      </section>
+
+      <div className="admin-two-column">
+        <section className="card admin-section-card">
+          <div className="section-heading compact">
+            <div>
+              <span className="eyebrow">Live</span>
+              <h2>Faol sessiyalar</h2>
+            </div>
+            <span className="badge active">{activeSessions.length}</span>
+          </div>
+          {activeSessions.length ? (
+            <div className="active-session-list">
+              {activeSessions.map((session) => {
+                const user = userFor(session)
+                return (
+                  <div className="active-session-row" key={session.id}>
+                    <span className="session-pc-mark">
+                      <IconDesktop size={18} />
+                    </span>
+                    <div>
+                      <strong>PC-{String(session.pcNumber || pcNumber(session.pcId)).padStart(2, '0')}</strong>
+                      <span>{user?.name || 'Foydalanuvchi'}</span>
+                    </div>
+                    <div className="row-timer">
+                      <strong>{formatHms(session.endsAt - now)}</strong>
+                      <span>{formatTime(session.endsAt)} da tugaydi</span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <div className="empty-inline">Hozir faol sessiya yo‘q.</div>
+          )}
         </section>
 
-        <section className="card">
-          <h3 className="section-title">Park holati</h3>
-          <p className="muted small">Qurilmalarning umumiy taqsimoti</p>
-          <div className="park-status">
-            {park.map((p) => (
-              <div className="park-row" key={p.key}>
-                <span className={`dot dot-${p.key}`} />
-                <span className="park-label">{p.label}</span>
-                <span className="park-count">{p.n}</span>
-                <div className="progress">
-                  <span style={{ width: `${(p.n / hall.totalCount) * 100}%` }} />
-                </div>
-              </div>
-            ))}
+        <section className="card admin-section-card">
+          <div className="section-heading compact">
+            <div>
+              <span className="eyebrow">Tasdiqlash</span>
+              <h2>Kutilayotgan bronlar</h2>
+            </div>
+            <span className="badge pending">{pending.length}</span>
           </div>
+          {pending.length ? (
+            <div className="pending-list compact-list">
+              {pending.slice(0, 5).map((booking) => {
+                const user = userFor({
+                  userId: booking.userId,
+                  userName: booking.userName,
+                  userPhone: booking.userPhone,
+                })
+                return (
+                  <div className="pending-row" key={booking.id}>
+                    <div>
+                      <strong>{user?.name || 'Foydalanuvchi'}</strong>
+                      <span>
+                        PC-{String(booking.pcNumber || pcNumber(booking.pcId)).padStart(2, '0')} · {formatTime(booking.startAt)}
+                      </span>
+                    </div>
+                    <span className="muted small">{booking.durationHours} soat</span>
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <div className="empty-inline">Kutilayotgan bron yo‘q.</div>
+          )}
+          <Link className="text-link" to="/admin/bookings">
+            Barcha bronlarni ochish
+          </Link>
         </section>
       </div>
 
-      <div className="two-col">
-        <section className="card">
-          <h3 className="section-title">Yuqori harorat</h3>
-          {highTemp.length ? (
-            <ul className="temp-list">
-              {highTemp.map((m) => (
-                <li key={m.id}>
-                  <strong>{m.name}</strong>
-                  <span className="muted small">{m.zone}</span>
-                  <span className={`temp-chip ${m.temp >= TEMP_HIGH ? 'hot' : ''}`}>{Math.round(m.temp)}°C</span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="muted">Yuqori haroratli qurilmalar yo&#39;q</p>
-          )}
-        </section>
+      <section className="card admin-section-card">
+        <div className="section-heading compact">
+          <div>
+            <span className="eyebrow">Zal</span>
+            <h2>PC holati</h2>
+          </div>
+          <div className="inline-statuses">
+            <span><i className="status-dot free" /> {availableCount} bo‘sh</span>
+            <span><i className="status-dot active" /> {activeCount} faol</span>
+          </div>
+        </div>
+        <div className="admin-pc-grid">
+          {pcRows.map((pc) => (
+            <div className={`admin-pc-card ${PC_STATUS_CLASSES[pc.status]}`} key={pc.id}>
+              <div>
+                <strong>PC-{String(pc.number).padStart(2, '0')}</strong>
+                <span className={`badge ${PC_STATUS_CLASSES[pc.status]}`}>
+                  {PC_STATUS_LABELS[pc.status]}
+                </span>
+              </div>
+              {pc.session ? (
+                <span className="pc-timer">{formatHms(pc.session.endsAt - now)}</span>
+              ) : pc.booking ? (
+                <span className="muted small">{formatTime(pc.booking.startAt)}</span>
+              ) : (
+                <span className="muted small">Band emas</span>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
 
-        <section className="card">
-          <h3 className="section-title">Kutilayotgan bronlar</h3>
-          {pending.length ? (
-            <ul className="pending-list">
-              {pending.map((b) => (
-                <li key={b.id} className="pending-item">
-                  <div className="fav-main">
-                    <strong>{b.customer}</strong>
-                    <span className="muted small">
-                      {b.machine} · {b.date} · {b.time} · {b.hours} soat
-                    </span>
-                  </div>
-                  <div className="book-right">
-                    <span className="muted small">{fmt(b.amount)} so&#39;m</span>
-                    <span className={`badge ${b.status === 'confirmed' ? 'st-available' : 'st-pending'}`}>
-                      {b.status === 'confirmed' ? 'Tasdiqlangan' : 'Kutilmoqda'}
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="muted">Kutilayotgan bronlar yo&#39;q</p>
-          )}
-        </section>
+      <div className="admin-summary-line">
+        <span><strong>{availableCount}</strong> bo‘sh</span>
+        <span><strong>{totalCount - availableCount - activeCount}</strong> bron qilingan</span>
+        <span><strong>{activeCount}</strong> ishlayapti</span>
       </div>
     </div>
   )

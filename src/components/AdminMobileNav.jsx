@@ -1,50 +1,51 @@
-import { useLocation } from 'react-router-dom'
-import { useHall } from '../hall/HallContext.jsx'
+import { NavLink } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext.jsx'
+import { useClub } from '../club/ClubContext.jsx'
 import {
+  IconCalendar,
   IconChart,
   IconDesktop,
-  IconCart,
-  IconCalendar,
-  IconTrophy,
+  IconLogout,
+  IconSettings,
+  IconUsers,
 } from './Icons.jsx'
 
+const NAV = [
+  { to: '/admin', label: 'Dashboard', icon: IconChart, end: true },
+  { to: '/admin/bookings', label: 'Bronlar', icon: IconCalendar, badge: true },
+  { to: '/admin/pcs', label: 'PC', icon: IconDesktop },
+  { to: '/admin/users', label: 'Users', icon: IconUsers },
+  { to: '/admin/settings', label: 'Sozlama', icon: IconSettings },
+]
+
 export default function AdminMobileNav() {
-  const location = useLocation()
-  const hall = useHall()
-
-  const pendingCount = hall.adminBookings.filter((b) => b.status === 'pending').length
-
-  const NAV = [
-    { to: '/admin', label: 'Boshqaruv', icon: IconChart, end: true },
-    { to: '/admin/computers', label: 'PC', icon: IconDesktop },
-    { to: '/admin/bar', label: 'Bar', icon: IconCart },
-    { to: '/admin/bookings', label: 'Buyurtma', icon: IconCalendar, badge: pendingCount },
-    { to: '/admin/tournaments', label: 'Turnir', icon: IconTrophy },
-  ]
+  const { logout } = useAuth()
+  const { todayBookings } = useClub()
+  const pendingCount = todayBookings.filter((booking) => booking.status === 'pending').length
 
   return (
-    <nav className="mobile-nav">
+    <nav className="mobile-nav admin-mobile-nav">
       {NAV.map((item) => {
         const Icon = item.icon
-        const active = item.end
-          ? location.pathname === item.to
-          : location.pathname.startsWith(item.to)
         return (
-          <a
+          <NavLink
             key={item.to}
-            href={`#${item.to}`}
-            className={`mobile-nav-item ${active ? 'active' : ''}`}
+            to={item.to}
+            end={item.end}
+            className={({ isActive }) => (isActive ? 'active' : '')}
           >
-            <span style={{ position: 'relative' }}>
+            <span className="mobile-icon-wrap">
               <Icon size={20} />
-              {item.badge > 0 && (
-                <span className="mobile-nav-badge">{item.badge}</span>
-              )}
+              {item.badge && pendingCount > 0 ? <b className="nav-badge">{pendingCount}</b> : null}
             </span>
             <span>{item.label}</span>
-          </a>
+          </NavLink>
         )
-      })}
-    </nav>
+       })}
+       <button className="mobile-logout" type="button" onClick={() => void logout()}>
+         <IconLogout size={20} />
+         <span>Chiqish</span>
+       </button>
+     </nav>
   )
 }

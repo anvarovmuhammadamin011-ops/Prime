@@ -1,34 +1,23 @@
-import { NavLink, useLocation } from 'react-router-dom'
-import { useAuth } from '../auth/AuthContext.jsx'
-import { IconHome, IconMap, IconTrophy, IconTeam, IconUser } from './Icons.jsx'
+import { NavLink } from 'react-router-dom'
+import { IconCalendar, IconHome, IconUser } from './Icons.jsx'
 
-const MOBILE_NAV = [
-  { to: '/', label: 'Bosh sahifa', icon: IconHome, match: '/' },
-  { to: '/map', label: 'Xarita', icon: IconMap },
-  { to: '/tournaments', label: 'Turnirlar', icon: IconTrophy },
-  { to: '/my-teams', label: 'Jamoa', icon: IconTeam },
+const NAV = [
+  { to: '/', label: 'Home', icon: IconHome, end: true },
+  { to: '/bookings', label: 'Bronlar', icon: IconCalendar },
   { to: '/profile', label: 'Profil', icon: IconUser },
 ]
 
 export default function MobileNav() {
-  const { user } = useAuth()
-  const location = useLocation()
-
-  if (!user || user.role !== 'user') return null
-
   return (
     <nav className="mobile-nav">
-      {MOBILE_NAV.map((item) => {
+      {NAV.map((item) => {
         const Icon = item.icon
-        const active = item.match
-          ? location.pathname === item.match
-          : location.pathname.startsWith(item.to)
         return (
           <NavLink
             key={item.to}
             to={item.to}
-            end={item.to === '/'}
-            className={`mobile-nav-item ${active ? 'active' : ''}`}
+            end={item.end}
+            className={({ isActive }) => (isActive ? 'active' : '')}
           >
             <Icon size={20} />
             <span>{item.label}</span>

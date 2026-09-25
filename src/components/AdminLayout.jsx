@@ -1,121 +1,119 @@
-import { useLocation, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext.jsx'
-import { useHall } from '../hall/HallContext.jsx'
-import { fmt } from '../data.js'
+import { useClub } from '../club/ClubContext.jsx'
+import { getInitials } from '../data.js'
 import {
+  IconCalendar,
   IconChart,
   IconDesktop,
-  IconCart,
-  IconCalendar,
   IconGamepad,
   IconLogout,
-  IconCoin,
-  IconClock,
-  IconTrophy,
+  IconSettings,
+  IconUsers,
 } from './Icons.jsx'
 import AdminMobileNav from './AdminMobileNav.jsx'
 
+const NAV = [
+  { to: '/admin', label: 'Dashboard', icon: IconChart, end: true },
+  { to: '/admin/bookings', label: 'Bronlar', icon: IconCalendar, badge: true },
+  { to: '/admin/pcs', label: 'PC’lar', icon: IconDesktop },
+  { to: '/admin/users', label: 'Users', icon: IconUsers },
+  { to: '/admin/settings', label: 'Sozlamalar', icon: IconSettings },
+]
+
 export default function AdminLayout() {
   const { user, logout } = useAuth()
-  const hall = useHall()
+  const { activeCount, availableCount, totalCount, todayBookings, loading, hasData, syncError, refreshData } = useClub()
   const location = useLocation()
-
-  const NAV = [
-    { to: '/admin', label: 'Boshqaruv', icon: IconChart, end: true },
-    { to: '/admin/computers', label: 'Kompyuterlar', icon: IconDesktop },
-    { to: '/admin/bar', label: 'Bar', icon: IconCart },
-    { to: '/admin/bookings', label: 'Bronlar', icon: IconCalendar },
-    { to: '/admin/tournaments', label: 'Turnirlar', icon: IconTrophy },
-  ]
-
-  const pendingCount = hall.adminBookings.filter((b) => b.status === 'pending').length
-
-  const currentLabel =
-    location.pathname === '/admin'
-      ? 'Admin boshqaruvi'
-      : location.pathname.startsWith('/admin/computers')
-        ? 'Kompyuterlar'
-        : location.pathname.startsWith('/admin/bar')
-          ? 'Bar'
-          : location.pathname.startsWith('/admin/tournaments')
-            ? 'Turnirlar'
-            : 'Bronlar'
-
-  const initials = (user.name || '?')
-    .split(' ')
-    .map((p) => p[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase()
+  const pendingCount = todayBookings.filter((booking) => booking.status === 'pending').length
+  const current = NAV.find((item) =>
+    item.end ? location.pathname === item.to : location.pathname.startsWith(item.to),
+  )
 
   return (
-    <div className="app">
+    <div className="app-shell admin-shell">
       <aside className="sidebar">
-        <div className="logo">
-          <div className="logo-icon">
-            <IconGamepad size={22} />
-          </div>
+        <div className="brand">
+          <span className="brand-mark">
+            <IconGamepad size={21} />
+          </span>
           <span>
-            PRIME <em>CLUB</em>
+            PRIME <strong>CLUB</strong>
           </span>
         </div>
-
-        <div className="admin-role">
-          {user.role === 'superadmin' ? 'Super Admin' : 'Administrator'}
+        <div className="role-label">
+          <span>{user.role === 'superadmin' ? 'Superadmin' : 'Administrator'}</span>
+          <small>V1 boshqaruv paneli</small>
         </div>
-
         <nav className="side-nav">
-          <p className="nav-label">Boshqaruv</p>
+          <span className="nav-caption">Boshqaruv</span>
           {NAV.map((item) => {
             const Icon = item.icon
-            const active = item.end
-              ? location.pathname === item.to
-              : location.pathname.startsWith(item.to)
             return (
-              <a
+              <NavLink
                 key={item.to}
-                href={`#${item.to}`}
-                className={`side-link ${active ? 'active' : ''}`}
+                to={item.to}
+                end={item.end}
+                className={({ isActive }) => (isActive ? 'side-link active' : 'side-link')}
               >
                 <Icon size={20} />
                 <span>{item.label}</span>
-              </a>
+                {item.badge && pendingCount > 0 ? <b className="nav-badge">{pendingCount}</b> : null}
+              </NavLink>
             )
           })}
         </nav>
-
-        <div className="side-user">
-          <div className="avatar">{initials}</div>
-          <div className="side-user-info">
-            <strong>{user.name}</strong>
-            <span>{user.role === 'superadmin' ? 'Super Admin' : 'Admin'}</span>
+        <div className="sidebar-card">
+          <span className="status-dot active" />
+          <div>
+            <strong>{activeCount} ta sessiya faol</strong>
+            <span>{availableCount}/{totalCount} ta PC bo‘sh</span>
           </div>
-          <button className="icon-btn" onClick={logout} title="Chiqish">
+        </div>
+        <div className="side-user">
+          <span className="avatar">{getInitials(user.name)}</span>
+          <div>
+            <strong>{user.name}</strong>
+            <span>{user.phone}</span>
+          </div>
+          <button className="icon-button" type="button" onClick={logout} title="Chiqish" aria-label="Chiqish">
             <IconLogout size={18} />
           </button>
         </div>
       </aside>
 
-      <div className="main">
+      <div className="main-shell">
         <header className="topbar">
-          <h1>{currentLabel}</h1>
-          <div className="topbar-right">
-            <span className="chip chip-green">
-              <IconClock size={15} /> {hall.bookedCount} / {hall.totalCount} faol
+          <div>
+            <span className="topbar-eyebrow">Prime Game Club</span>
+            <h1>{current?.label || 'Dashboard'}</h1>
+          </div>
+          <div className="topbar-actions">
+            <span className="status-pill active">
+              <span className="status-dot active" />
+              {activeCount} faol
             </span>
-            <span className="chip chip-accent">
-              <IconCoin size={15} /> {fmt(hall.barRevenue)} UZS
+            <span className="status-pill free">
+              <span className="status-dot free" />
+              {availableCount} bo‘sh
             </span>
-            <span className="chip chip-violet">{pendingCount} kutilmoqda</span>
-            <div className="top-avatar">{initials}</div>
+            <span className="avatar small">{getInitials(user.name)}</span>
           </div>
         </header>
-
-        <main className="content">
-          <Outlet />
-        </main>
+         <main className="content" aria-busy={loading}>
+           {syncError ? (
+             <div className="form-alert error sync-alert" role="alert">
+               <span>{syncError}</span>
+               <button className="text-button" type="button" onClick={() => refreshData()}>
+                 Qayta urinish
+               </button>
+             </div>
+           ) : null}
+           {loading && !hasData ? (
+             <div className="content-loading" role="status">Ma’lumotlar yuklanmoqda...</div>
+           ) : syncError && !hasData ? null : <Outlet />}
+         </main>
       </div>
-
       <AdminMobileNav />
     </div>
   )
