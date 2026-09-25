@@ -49,6 +49,12 @@ const TEXTS = {
     errorGeneric: 'Xatolik yuz berdi, qayta urinib ko\'ring',
     successRegistered: 'Muvaffaqiyatli ro\'yxatdan o\'tdingiz!',
     passwordCopied: 'Parol nusxalandi',
+    demoLogin: 'Demo kirish',
+    demoSubtitle: 'Tayyor hisoblar bilan tezda kirish',
+    demoUser: 'Foydalanuvchi',
+    demoAdmin: 'Admin',
+    demoSuperAdmin: 'Super Admin',
+    demoPassword: 'Parol: demo12345',
   },
   ru: {
     welcome: 'Добро пожаловать в Prime Game Club',
@@ -81,6 +87,12 @@ const TEXTS = {
     errorGeneric: 'Произошла ошибка, попробуйте снова',
     successRegistered: 'Вы успешно зарегистрировались!',
     passwordCopied: 'Пароль скопирован',
+    demoLogin: 'Демо вход',
+    demoSubtitle: 'Быстрый вход готовыми аккаунтами',
+    demoUser: 'Пользователь',
+    demoAdmin: 'Админ',
+    demoSuperAdmin: 'Супер Админ',
+    demoPassword: 'Пароль: demo12345',
   },
   en: {
     welcome: 'Welcome to Prime Game Club',
@@ -113,6 +125,12 @@ const TEXTS = {
     errorGeneric: 'An error occurred, please try again',
     successRegistered: 'Successfully registered!',
     passwordCopied: 'Password copied',
+    demoLogin: 'Demo Login',
+    demoSubtitle: 'Quick login with preset accounts',
+    demoUser: 'User',
+    demoAdmin: 'Admin',
+    demoSuperAdmin: 'Super Admin',
+    demoPassword: 'Password: demo12345',
   },
 }
 
@@ -592,6 +610,44 @@ export default function Login() {
 
                   {error ? <div className="form-alert error" role="alert">{error}</div> : null}
                   {success ? <div className="form-alert success" role="status">{success}</div> : null}
+
+                  <div className="form-alert notice" style={{marginBottom: 12, padding: 12, fontSize: 12}}>
+                    <div style={{fontWeight: 700, marginBottom: 8}}>{t.demoLogin}</div>
+                    <div style={{color: 'var(--muted)', marginBottom: 10}}>{t.demoSubtitle}</div>
+                    <div style={{display: 'flex', flexDirection: 'column', gap: 6}}>
+                      <button
+                        type="button"
+                        className="button secondary wide"
+                        style={{padding: '10px 12px', textAlign: 'left', justifyContent: 'space-between'}}
+                        onClick={() => { setPhone('+998901234567'); setPassword('demo12345'); }}
+                        disabled={submitting}
+                      >
+                        <span>{t.demoUser}</span>
+                        <span style={{fontSize: 11, color: 'var(--accent-strong)'}}>+998901234567</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="button secondary wide"
+                        style={{padding: '10px 12px', textAlign: 'left', justifyContent: 'space-between'}}
+                        onClick={() => { setPhone('+998901111111'); setPassword('demo12345'); }}
+                        disabled={submitting}
+                      >
+                        <span>{t.demoAdmin}</span>
+                        <span style={{fontSize: 11, color: 'var(--accent-strong)'}}>+998901111111</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="button secondary wide"
+                        style={{padding: '10px 12px', textAlign: 'left', justifyContent: 'space-between'}}
+                        onClick={() => { setPhone('+998900000000'); setPassword('demo12345'); }}
+                        disabled={submitting}
+                      >
+                        <span>{t.demoSuperAdmin}</span>
+                        <span style={{fontSize: 11, color: 'var(--accent-strong)'}}>+998900000000</span>
+                      </button>
+                    </div>
+                    <div style={{marginTop: 8, fontSize: 11, color: 'var(--muted)'}}>{t.demoPassword}</div>
+                  </div>
 
                   <button
                     className="button primary wide"
