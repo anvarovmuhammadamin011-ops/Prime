@@ -17,6 +17,13 @@ const LANGUAGES = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
 ]
 
+const DEMO_PASSWORD = 'demo12345'
+const DEMO_ACCOUNTS = [
+  { key: 'demoUser', phone: '+998901234567' },
+  { key: 'demoAdmin', phone: '+998901111111' },
+  { key: 'demoSuperAdmin', phone: '+998900000000' },
+]
+
 const TEXTS = {
   uz: {
     welcome: 'Prime Game Club ga xush kelibsiz',
@@ -279,16 +286,16 @@ export default function Login() {
     }
   }
 
-  async function handleLogin(event) {
-    event.preventDefault()
+  async function submitCredentials(phoneValue, passwordValue) {
     setError('')
-    if (!phone || !password) {
+    setSuccess('')
+    if (!phoneValue || !passwordValue) {
       setError(t.errorRequired)
       return
     }
     setSubmitting(true)
     try {
-      const result = await login(phone, password)
+      const result = await login(phoneValue, passwordValue)
       if (!result.ok) {
         setError(result.error || t.errorGeneric)
         return
@@ -297,6 +304,17 @@ export default function Login() {
     } finally {
       setSubmitting(false)
     }
+  }
+
+  async function handleLogin(event) {
+    event.preventDefault()
+    await submitCredentials(phone, password)
+  }
+
+  function handleDemoLogin(phoneValue) {
+    setPhone(phoneValue)
+    setPassword(DEMO_PASSWORD)
+    void submitCredentials(phoneValue, DEMO_PASSWORD)
   }
 
   async function handleTelegramLaunch() {
@@ -615,36 +633,19 @@ export default function Login() {
                     <div style={{fontWeight: 700, marginBottom: 8}}>{t.demoLogin}</div>
                     <div style={{color: 'var(--muted)', marginBottom: 10}}>{t.demoSubtitle}</div>
                     <div style={{display: 'flex', flexDirection: 'column', gap: 6}}>
-                      <button
-                        type="button"
-                        className="button secondary wide"
-                        style={{padding: '10px 12px', textAlign: 'left', justifyContent: 'space-between'}}
-                        onClick={() => { setPhone('+998901234567'); setPassword('demo12345'); }}
-                        disabled={submitting}
-                      >
-                        <span>{t.demoUser}</span>
-                        <span style={{fontSize: 11, color: 'var(--accent-strong)'}}>+998901234567</span>
-                      </button>
-                      <button
-                        type="button"
-                        className="button secondary wide"
-                        style={{padding: '10px 12px', textAlign: 'left', justifyContent: 'space-between'}}
-                        onClick={() => { setPhone('+998901111111'); setPassword('demo12345'); }}
-                        disabled={submitting}
-                      >
-                        <span>{t.demoAdmin}</span>
-                        <span style={{fontSize: 11, color: 'var(--accent-strong)'}}>+998901111111</span>
-                      </button>
-                      <button
-                        type="button"
-                        className="button secondary wide"
-                        style={{padding: '10px 12px', textAlign: 'left', justifyContent: 'space-between'}}
-                        onClick={() => { setPhone('+998900000000'); setPassword('demo12345'); }}
-                        disabled={submitting}
-                      >
-                        <span>{t.demoSuperAdmin}</span>
-                        <span style={{fontSize: 11, color: 'var(--accent-strong)'}}>+998900000000</span>
-                      </button>
+                      {DEMO_ACCOUNTS.map((account) => (
+                        <button
+                          key={account.key}
+                          type="button"
+                          className="button secondary wide"
+                          style={{padding: '10px 12px', textAlign: 'left', justifyContent: 'space-between'}}
+                          onClick={() => handleDemoLogin(account.phone)}
+                          disabled={submitting}
+                        >
+                          <span>{t[account.key]}</span>
+                          <span style={{fontSize: 11, color: 'var(--accent-strong)'}}>{account.phone}</span>
+                        </button>
+                      ))}
                     </div>
                     <div style={{marginTop: 8, fontSize: 11, color: 'var(--muted)'}}>{t.demoPassword}</div>
                   </div>

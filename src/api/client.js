@@ -92,13 +92,19 @@ async function request(path, options = {}) {
     requestHeaders.Authorization = `Bearer ${session.accessToken}`
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method,
-    headers: requestHeaders,
-    body: payload,
-    credentials: 'include',
-    signal,
-  })
+  let response
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      method,
+      headers: requestHeaders,
+      body: payload,
+      credentials: 'include',
+      signal,
+    })
+  } catch (error) {
+    if (error?.name === 'AbortError') throw error
+    throw new ApiError('API serverga ulanib bo‘lmadi', { status: 0, code: 'NETWORK_ERROR' })
+  }
   const data = await parseResponse(response)
   if (!response.ok) throw errorFromResponse(response.status, data)
   return data
@@ -145,7 +151,16 @@ export async function apiRequest(path, options = {}) {
 }
 
 export function getApiErrorMessage(error) {
-  return error instanceof ApiError ? error.message : 'Server bilan bog‘lanishda xatolik yuz berdi'
+  if (!(error instanceof ApiError)) return 'Server bilan bog‘lanishda xatolik yuz berdi'
+  if (error.status === 404 || error.status === 405) {
+    return 'API server topilmadi. Backend hali deploy qilinmagan yoki VITE_API_BASE_URL noto‘g‘ri.'
+  }
+  if (error.status === 0) {
+    return 'API serverga ulanib bo‘lmadi. Internet yoki server holatini tekshiring.'
+  }
+  if (error.status === 429) return 'Juda ko‘p urinish. Biroz kutib, qayta yuboring.'
+  if (error.status >= 500) return 'Serverda xatolik yuz berdi. Administratorga murojaat qiling.'
+  return error.message
 }
 
 export function telegramSession(initData) {
