@@ -34,6 +34,7 @@ const environmentSchema = z.object({
     .min(1)
     .default('postgres://prime:prime@localhost:5432/prime_club'),
   DB_SSL: booleanValue,
+  DB_SSL_REJECT_UNAUTHORIZED: booleanValue.default(true),
   DB_POOL_MAX: z.coerce.number().int().min(1).max(50).default(10),
   JWT_SECRET: z.string().min(32).default('prime-club-development-jwt-secret-change-me'),
   JWT_ACCESS_TTL: z.string().default('15m'),
@@ -89,7 +90,9 @@ export function getConfig(environment = process.env) {
     port: values.PORT,
     database: {
       url: values.DATABASE_URL,
-      ssl: values.DB_SSL ? { rejectUnauthorized: true, ca: values.DB_SSL_CA || undefined } : undefined,
+      ssl: values.DB_SSL
+        ? { rejectUnauthorized: values.DB_SSL_REJECT_UNAUTHORIZED, ca: values.DB_SSL_CA || undefined }
+        : undefined,
       max: values.DB_POOL_MAX,
     },
     jwt: {

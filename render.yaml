@@ -23,12 +23,14 @@ services:
           property: connectionString
       - key: DB_SSL
         value: "true"
+      - key: DB_SSL_REJECT_UNAUTHORIZED
+        value: "false"
       - key: JWT_SECRET
         generateValue: true
       - key: ACCESS_CODE_PEPPER
         generateValue: true
       - key: CORS_ORIGIN
-        value: https://prime-game-club.vercel.app
+        value: https://prime-nine-sage.vercel.app,https://prime-game-club.vercel.app
       - key: TELEGRAM_ENABLED
         value: "true"
       - key: TELEGRAM_BOT_TOKEN
@@ -36,14 +38,14 @@ services:
       - key: TELEGRAM_BOT_USERNAME
         value: primen1robot
       - key: TELEGRAM_MINI_APP_URL
-        value: https://prime-game-club.vercel.app
+        value: https://prime-nine-sage.vercel.app
       - key: TELEGRAM_WEBHOOK_SECRET
         generateValue: true
       - key: TELEGRAM_WEBHOOK_URL
         value: https://prime-club-api.onrender.com/api/v1/telegram/webhook
       - key: RUN_EXPIRATION_WORKER
         value: "true"
-    healthCheckPath: /api/v1/health
+    healthCheckPath: /health
     autoDeploy: true
 
   # Background Worker (for session expiration)
@@ -63,6 +65,8 @@ services:
           property: connectionString
       - key: DB_SSL
         value: "true"
+      - key: DB_SSL_REJECT_UNAUTHORIZED
+        value: "false"
       - key: JWT_SECRET
         fromService:
           name: prime-club-api
@@ -72,7 +76,3 @@ services:
           name: prime-club-api
           property: envVars.ACCESS_CODE_PEPPER
     autoDeploy: true
-
-databases:
-  - name: prime-club-db
-    plan: free

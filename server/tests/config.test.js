@@ -58,6 +58,24 @@ describe('server configuration', () => {
     })).toThrow('DB_SSL=true')
   })
 
+  it('verifies database certificates by default and allows an explicit opt-out', () => {
+    const base = {
+      NODE_ENV: 'production',
+      JWT_SECRET: 'a'.repeat(32),
+      ACCESS_CODE_PEPPER: 'p'.repeat(32),
+      DB_SSL: 'true',
+    }
+    expect(getConfig(base).database.ssl).toEqual({ rejectUnauthorized: true, ca: undefined })
+    expect(getConfig({ ...base, DB_SSL_REJECT_UNAUTHORIZED: 'false' }).database.ssl).toEqual({
+      rejectUnauthorized: false,
+      ca: undefined,
+    })
+    expect(getConfig({ ...base, DB_SSL_CA: 'ca-cert-contents' }).database.ssl).toEqual({
+      rejectUnauthorized: true,
+      ca: 'ca-cert-contents',
+    })
+  })
+
   it('keeps demo seeding disabled in production unless explicitly enabled', () => {
     const base = {
       NODE_ENV: 'production',
