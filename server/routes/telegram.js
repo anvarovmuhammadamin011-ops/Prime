@@ -97,17 +97,19 @@ export function createTelegramRouter(pool, config) {
       const message = update.message
       if (message?.text && /^\/start(?:@[a-zA-Z0-9_]+)?(?:\s|$)/.test(message.text) && message.chat?.id) {
         try {
+          const userName = message.from?.first_name || 'do\'st'
           await sendTelegramMessage(
             config,
             message.chat.id,
-            'Prime Game Club uchun Mini App ochish uchun quyidagi tugmani bosing.',
+            `Salom, ${userName}! 👋\n\nXush kelibsiz, <b>Prime Game Club</b> botiga!\n\nBu yerda siz:\n🎮 Kompyuterlarni band qilishingiz\n⏱ Vaqtni kuzatishingiz\n📱 Telegram orqali oson ro'yxatdan o'tishingiz mumkin.\n\nQuyidagi tugmani bosib Mini Appni oching va o'ynashni boshlang!`,
             telegram.miniAppUrl
               ? {
                   reply_markup: {
-                    inline_keyboard: [[{ text: 'Prime Game Club', web_app: { url: telegram.miniAppUrl } }]],
+                    inline_keyboard: [[{ text: '🎮 Prime Game Club ochish', web_app: { url: telegram.miniAppUrl } }]],
                   },
+                  parse_mode: 'HTML',
                 }
-              : undefined,
+              : { parse_mode: 'HTML' },
           )
         } catch {
           console.error('Telegram webhook command failed')

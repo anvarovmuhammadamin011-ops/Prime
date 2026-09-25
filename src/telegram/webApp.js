@@ -50,3 +50,23 @@ export function openTelegramBot() {
   if (typeof window === 'undefined') return false
   return window.open(url, '_blank', 'noopener,noreferrer') !== null
 }
+
+export function requestContact() {
+  const webApp = getWebApp()
+  if (!webApp) {
+    throw new Error('Telegram WebApp not available')
+  }
+  return new Promise((resolve, reject) => {
+    try {
+      webApp.requestContact?.((granted) => {
+        if (granted && webApp.initDataUnsafe?.user) {
+          resolve(webApp.initDataUnsafe.user)
+        } else {
+          reject(new Error('Contact permission denied'))
+        }
+      })
+    } catch {
+      reject(new Error('Failed to request contact'))
+    }
+  })
+}
