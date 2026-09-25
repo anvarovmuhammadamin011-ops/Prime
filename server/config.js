@@ -45,6 +45,7 @@ const environmentSchema = z.object({
   RUN_EXPIRATION_WORKER: booleanValue.default(true),
   DB_SSL_CA: z.string().optional(),
   DEMO_ADMIN_PASSWORD: z.string().min(8).default('demo12345'),
+  DEMO_SEED_ENABLED: booleanValue.default(false),
   TELEGRAM_ENABLED: booleanValue.default(false),
   TELEGRAM_BOT_TOKEN: optionalString,
   TELEGRAM_BOT_USERNAME: optionalString,
@@ -102,6 +103,7 @@ export function getConfig(environment = process.env) {
     autoExpireIntervalMs: values.AUTO_EXPIRE_INTERVAL_MS,
     runExpirationWorker: values.RUN_EXPIRATION_WORKER,
     demoAdminPassword: values.DEMO_ADMIN_PASSWORD,
+    demoSeedEnabled: values.DEMO_SEED_ENABLED,
     telegram: {
       enabled: values.TELEGRAM_ENABLED,
       botToken: values.TELEGRAM_BOT_TOKEN || null,

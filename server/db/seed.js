@@ -4,8 +4,8 @@ import { getConfig } from '../config.js'
 import { createPool, withTransaction } from './client.js'
 
 export async function seedDatabase(pool, config) {
-  if (config.nodeEnv === 'production') {
-    throw new Error('Demo seed production muhitida ishga tushirilmaydi')
+  if (config.nodeEnv === 'production' && !config.demoSeedEnabled) {
+    throw new Error('Demo seed production muhitida faqat DEMO_SEED_ENABLED=true bilan ishga tushiriladi')
   }
   const passwordHash = await bcrypt.hash(config.demoAdminPassword, 12)
   const demoUsers = [

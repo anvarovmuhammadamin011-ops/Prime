@@ -57,4 +57,15 @@ describe('server configuration', () => {
       DB_SSL: 'false',
     })).toThrow('DB_SSL=true')
   })
+
+  it('keeps demo seeding disabled in production unless explicitly enabled', () => {
+    const base = {
+      NODE_ENV: 'production',
+      JWT_SECRET: 'a'.repeat(32),
+      ACCESS_CODE_PEPPER: 'p'.repeat(32),
+      DB_SSL: 'true',
+    }
+    expect(getConfig(base).demoSeedEnabled).toBe(false)
+    expect(getConfig({ ...base, DEMO_SEED_ENABLED: 'true' }).demoSeedEnabled).toBe(true)
+  })
 })
