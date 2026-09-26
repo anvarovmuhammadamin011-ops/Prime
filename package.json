@@ -16,6 +16,7 @@
     "verify:demo": "node scripts/verify-demo-login.mjs",
     "verify:mock": "node scripts/verify-mock-demo.mjs",
     "verify:booking": "node scripts/verify-booking-flow.mjs",
+    "verify:mobile": "node scripts/verify-mobile-ui.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",

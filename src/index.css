@@ -2624,6 +2624,13 @@ a {
   .pc-actions .button {
     flex: 1 1 calc(50% - 6px);
   }
+
+  /* iOS Safari fokusda avtomatik zoom qilmasligi uchun (16px talab) */
+  .field input,
+  .field select,
+  .search-field input {
+    font-size: 16px;
+  }
 }
 
 /* ===== Bron modalida PC tanlash grid ===== */
