@@ -12,4 +12,4 @@ COPY --chown=node:node .env.example ./
 USER node
 EXPOSE 4000
 
-CMD ["sh", "-c", "node server/db/migrate.js && node server/index.js"]
+CMD ["sh", "-c", "node server/db/migrate.js && node server/db/seed.js && node server/index.js"]

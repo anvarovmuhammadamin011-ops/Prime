@@ -1,11 +1,16 @@
+# Render Blueprint — Prime Club
+# Deploy: Render Dashboard > New > Blueprint > shu repo'ni tanlash
+# Yoki:   https://dashboard.render.com/select-repo?type=blueprint
+previewsEnabled: false
+
 services:
-  # PostgreSQL Database
+  # PostgreSQL Database (free plan — 30 kundan keyin o'chmaydi, lekin bo'sh plan chegaralari bor)
   - type: pserv
     name: prime-club-db
     plan: free
     region: oregon
 
-  # Backend API
+  # Backend API (24/7, auto-deploy GitHub push'dan)
   - type: web
     name: prime-club-api
     runtime: docker
@@ -21,6 +26,8 @@ services:
         fromDatabase:
           name: prime-club-db
           property: connectionString
+      - key: DB_DRIVER
+        value: postgres
       - key: DB_SSL
         value: "true"
       - key: DB_SSL_REJECT_UNAUTHORIZED
@@ -31,24 +38,24 @@ services:
         generateValue: true
       - key: CORS_ORIGIN
         value: https://prime-nine-sage.vercel.app,https://prime-game-club.vercel.app
-      - key: TELEGRAM_ENABLED
+      # Demo hisoblar (+998901234567 / +998901111111 / +998900000000, parol: demo12345)
+      # Dockerfile'da migrate + seed + start qilib beriladi (idempotent)
+      - key: DEMO_SEED_ENABLED
         value: "true"
-      - key: TELEGRAM_BOT_TOKEN
-        sync: false
+      - key: RUN_EXPIRATION_WORKER
+        value: "true"
+      # Telegram botni yoqish uchun quyidagini "true" qilib, TELEGRAM_BOT_TOKEN va
+      # TELEGRAM_WEBHOOK_SECRET (generateValue) qo'shing. Aks holda servis ishga tushmaydi.
+      - key: TELEGRAM_ENABLED
+        value: "false"
       - key: TELEGRAM_BOT_USERNAME
         value: primen1robot
       - key: TELEGRAM_MINI_APP_URL
         value: https://prime-nine-sage.vercel.app
-      - key: TELEGRAM_WEBHOOK_SECRET
-        generateValue: true
-      - key: TELEGRAM_WEBHOOK_URL
-        value: https://prime-club-api.onrender.com/api/v1/telegram/webhook
-      - key: RUN_EXPIRATION_WORKER
-        value: "true"
     healthCheckPath: /health
     autoDeploy: true
 
-  # Background Worker (for session expiration)
+  # Background Worker (session expiration)
   - type: worker
     name: prime-club-worker
     runtime: docker
@@ -63,6 +70,8 @@ services:
         fromDatabase:
           name: prime-club-db
           property: connectionString
+      - key: DB_DRIVER
+        value: postgres
       - key: DB_SSL
         value: "true"
       - key: DB_SSL_REJECT_UNAUTHORIZED
