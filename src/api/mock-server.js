@@ -2,7 +2,6 @@
 // Real server javob formatlarini aynan takrorlaydi (server/routes va service'larga mos).
 
 const HOUR_MS = 60 * 60 * 1000
-const MINUTE_MS = 60 * 1000
 const STORAGE_KEY = 'prime-v1-demo-state'
 const SESSION_TTL_MS = 60 * 60 * 1000
 
@@ -30,6 +29,8 @@ function zoneForNumber(number) {
   if (number >= 8) return 'gaming'
   return 'standard'
 }
+
+const MINUTE_MS = 60 * 1000
 
 function createPc(number) {
   return {
@@ -532,6 +533,110 @@ const routes = [
         state.pcs = state.pcs.slice(0, settings.pcCount)
       }
       return { settings: { ...state.settings } }
+    },
+  },
+  {
+    method: 'GET',
+    pattern: /^\/admin\/pcs$/,
+    handle(state, user) {
+      requireStaff(user)
+      expireStale(state)
+      return { pcs: state.pcs.map((pc) => pcView(state, pc)) }
+    },
+  },
+  {
+    method: 'PATCH',
+    pattern: /^\/admin\/pcs\/([^/]+)$/,
+    handle(state, user, params, body) {
+      requireStaff(user)
+      const pc = state.pcs.find((item) => item.id === params[0])
+      if (!pc) throw httpError(404, 'PC_NOT_FOUND', 'PC topilmadi')
+      const active = Boolean(body?.active)
+      if (!active) {
+        const busy = state.sessions.some((session) => session.pcId === pc.id && session.status === 'active' && session.endsAt > Date.now())
+          || state.bookings.some((booking) => booking.pcId === pc.id && BLOCKING.has(booking.status) && booking.endAt > Date.now())
+        if (busy) throw httpError(409, 'PC_IN_USE', 'Faol sessiyasi yoki broni bor PC‘ni o‘chirib bo‘lmaydi')
+      }
+      pc.active = active
+      return { pc: pcView(state, pc) }
+    },
+  },
+  {
+    method: 'POST',
+    pattern: /^\/admin\/pcs\/([^/]+)\/start-now$/,
+    handle(state, user, params, body) {
+      requireStaff(user)
+      const pc = state.pcs.find((item) => item.id === params[0])
+      if (!pc) throw httpError(404, 'PC_NOT_FOUND', 'PC topilmadi')
+      if (!pc.active) throw httpError(409, 'PC_INACTIVE', 'PC o‘chirilgan — avval yoqing')
+      const now = Date.now()
+      let durationMs
+      if (body?.minutes !== undefined) {
+        const mins = Number(body.minutes)
+        if (!Number.isInteger(mins) || mins < 15 || mins > 720) {
+          throw httpError(400, 'INVALID_DURATION', 'Daqiqa 15–720 oralig‘ida bo‘lsin')
+        }
+        durationMs = mins * MINUTE_MS
+      } else {
+        const hrs = Number(body?.hours ?? 1)
+        if (!Number.isInteger(hrs) || hrs < 1 || hrs > 12) {
+          throw httpError(400, 'INVALID_DURATION', 'Soat 1–12 oralig‘ida bo‘lsin')
+        }
+        durationMs = hrs * 60 * MINUTE_MS
+      }
+      const busy = state.sessions.some((session) => session.pcId === pc.id && session.status === 'active' && session.endsAt > now)
+        || state.bookings.some((booking) => booking.pcId === pc.id && BLOCKING.has(booking.status) && booking.startAt < now + durationMs && booking.endAt > now)
+      if (busy) throw httpError(409, 'PC_IN_USE', 'Bu PC hozir band — boshqa PC tanlang')
+      const booking = {
+        id: nextId('booking'),
+        pcId: pc.id,
+        pcNumber: pc.number,
+        userId: user.id,
+        status: BOOKING_STATUS.ACTIVE,
+        startAt: now,
+        endAt: now + durationMs,
+        durationHours: durationMs / HOUR_MS,
+        pricePerHour: state.settings.pricePerHour,
+        totalPrice: Math.round((durationMs / HOUR_MS) * state.settings.pricePerHour),
+        accessCode: null,
+        hasAccessCode: false,
+        arrivalConfirmedAt: now,
+        arrivalDueAt: null,
+        reminderSentAt: null,
+        approvedAt: now,
+        accessCodeUsedAt: null,
+        sessionId: null,
+        createdAt: now,
+      }
+      state.bookings.unshift(booking)
+      const session = {
+        id: nextId('session'),
+        bookingId: booking.id,
+        pcId: pc.id,
+        pcNumber: pc.number,
+        userId: user.id,
+        status: 'active',
+        startedAt: now,
+        endsAt: now + durationMs,
+      }
+      state.sessions.unshift(session)
+      booking.sessionId = session.id
+      return { pc: pcView(state, pc), bookingId: booking.id, session: sessionView(session) }
+    },
+  },
+  {
+    method: 'POST',
+    pattern: /^\/admin\/pcs\/([^/]+)\/stop$/,
+    handle(state, user, params) {
+      requireStaff(user)
+      const pc = state.pcs.find((item) => item.id === params[0])
+      if (!pc) throw httpError(404, 'PC_NOT_FOUND', 'PC topilmadi')
+      const session = state.sessions.find((item) => item.pcId === pc.id && item.status === 'active')
+      if (!session) throw httpError(409, 'SESSION_NOT_ACTIVE', 'Bu PC da faol sessiya yo‘q')
+      session.status = 'completed'
+      const booking = state.bookings.find((item) => item.id === session.bookingId)
+      if (booking && booking.status === BOOKING_STATUS.ACTIVE) booking.status = BOOKING_STATUS.COMPLETED
+      return { pc: pcView(state, pc), session: sessionView(session) }
     },
   },
   {

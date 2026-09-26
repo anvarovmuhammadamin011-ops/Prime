@@ -125,6 +125,43 @@ async function main() {
   const state2 = JSON.parse(window.localStorage.getItem('prime-v1-demo-state'))
   check('persisted', state2.bookings.length === 1 && state2.sessions.length === 1, `b=${state2.bookings.length} s=${state2.sessions.length}`)
 
+  // 14. Admin PC boshqaruvi
+  const adminPcs = await mockRequest('/admin/pcs', { headers: headers(adminToken) })
+  check('admin pcs list', adminPcs?.pcs?.length === 20, adminPcs?.pcs?.length)
+
+  const pc2 = adminPcs.pcs.find((pc) => pc.id === 'pc-2')
+  const startNow = await mockRequest(`/admin/pcs/${pc2.id}/start-now`, {
+    method: 'POST',
+    headers: headers(adminToken),
+    body: JSON.stringify({ minutes: 30 }),
+  })
+  check('start-now 30min', startNow?.session?.status === 'active' && startNow.session.endsAt - startNow.session.startedAt === 30 * 60 * 1000, startNow?.session?.id)
+
+  const stopResult = await mockRequest(`/admin/pcs/${pc2.id}/stop`, { method: 'POST', headers: headers(adminToken) })
+  check('stop session', stopResult?.session?.status === 'completed', stopResult?.session?.status)
+
+  const offResult = await mockRequest(`/admin/pcs/${pc2.id}`, {
+    method: 'PATCH',
+    headers: headers(adminToken),
+    body: JSON.stringify({ active: false }),
+  })
+  check('pc off', offResult?.pc?.active === false, offResult?.pc?.active)
+
+  let startOnOff = null
+  try {
+    await mockRequest(`/admin/pcs/${pc2.id}/start-now`, { method: 'POST', headers: headers(adminToken), body: JSON.stringify({ hours: 1 }) })
+  } catch (error) {
+    startOnOff = error
+  }
+  check('start on off pc rejected', startOnOff?.mockResponse?.status === 409, startOnOff?.mockResponse?.status)
+
+  const onResult = await mockRequest(`/admin/pcs/${pc2.id}`, {
+    method: 'PATCH',
+    headers: headers(adminToken),
+    body: JSON.stringify({ active: true }),
+  })
+  check('pc on', onResult?.pc?.active === true, onResult?.pc?.active)
+
   check('isDemoMode export', typeof isDemoMode === 'function')
 
   const failed = results.filter((item) => !item.ok)

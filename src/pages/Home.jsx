@@ -17,7 +17,7 @@ import {
   toDateInputValue,
   toTimeInputValue,
 } from '../data.js'
-import { IconCalendar, IconClock, IconPlus, IconX } from '../components/Icons.jsx'
+import { IconCalendar, IconCheck, IconClock, IconPlus, IconX } from '../components/Icons.jsx'
 
 export default function Home() {
   const { user } = useAuth()
@@ -234,26 +234,12 @@ export default function Home() {
             <div className="modal-head">
               <div>
                 <span className="eyebrow">Yangi bron</span>
-                <h2>PC va vaqtni tanlang</h2>
+                <h2>Sana va vaqtni tanlang</h2>
               </div>
               <button className="icon-button" type="button" onClick={() => setBookingOpen(false)}>
                 <IconX size={19} />
               </button>
             </div>
-
-            <label className="field">
-              <span>PC</span>
-              <select value={effectiveSelectedPcId} onChange={(event) => setSelectedPcId(event.target.value)} required>
-                <option value="" disabled>
-                  Bo‘sh PC tanlang
-                </option>
-                {availablePcs.map((pc) => (
-                  <option key={pc.id} value={pc.id}>
-                    PC-{String(pc.number).padStart(2, '0')} · {formatMoney(pc.pricePerHour)} so‘m/soat
-                  </option>
-                ))}
-              </select>
-            </label>
 
             <div className="field-grid two">
               <label className="field">
@@ -287,6 +273,34 @@ export default function Home() {
                 ))}
               </div>
             </label>
+
+            <div className="field">
+              <span className="pc-picker-label">
+                Bo‘sh PC‘lar ({availablePcs.length} ta)
+              </span>
+              {availablePcs.length ? (
+                <div className="pc-picker-grid">
+                  {availablePcs.map((pc) => (
+                    <button
+                      key={pc.id}
+                      type="button"
+                      className={`pc-picker-card ${effectiveSelectedPcId === pc.id ? 'selected' : ''}`}
+                      onClick={() => setSelectedPcId(pc.id)}
+                    >
+                      <span className="pc-picker-number">
+                        PC-{String(pc.number).padStart(2, '0')}
+                      </span>
+                      <span className="pc-picker-price">{formatMoney(pc.pricePerHour)}</span>
+                      {effectiveSelectedPcId === pc.id ? (
+                        <span className="pc-picker-check"><IconCheck size={13} /></span>
+                      ) : null}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-inline">Bu vaqt uchun bo‘sh PC yo‘q — boshqa vaqt tanlang.</div>
+              )}
+            </div>
 
             <div className="booking-summary">
               <span>Taxminiy narx</span>

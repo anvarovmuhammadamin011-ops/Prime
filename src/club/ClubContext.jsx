@@ -296,6 +296,42 @@ export function ClubProvider({ children }) {
     }
   }
 
+  async function togglePc(pcId, active) {
+    try {
+      const data = await apiRequest(`/admin/pcs/${pcId}`, {
+        method: 'PATCH',
+        body: { active },
+      })
+      await refreshData({ silent: true })
+      return { ok: true, pc: data.pc }
+    } catch (requestError) {
+      return { ok: false, error: getApiErrorMessage(requestError) }
+    }
+  }
+
+  async function startPcNow(pcId, { minutes = null, hours = null } = {}) {
+    try {
+      const data = await apiRequest(`/admin/pcs/${pcId}/start-now`, {
+        method: 'POST',
+        body: minutes ? { minutes } : { hours: hours || 1 },
+      })
+      await refreshData({ silent: true })
+      return { ok: true, pc: data.pc, session: data.session }
+    } catch (requestError) {
+      return { ok: false, error: getApiErrorMessage(requestError) }
+    }
+  }
+
+  async function stopPc(pcId) {
+    try {
+      const data = await apiRequest(`/admin/pcs/${pcId}/stop`, { method: 'POST' })
+      await refreshData({ silent: true })
+      return { ok: true, pc: data.pc, session: data.session }
+    } catch (requestError) {
+      return { ok: false, error: getApiErrorMessage(requestError) }
+    }
+  }
+
   const activePcs = useMemo(
     () => state.pcs.filter((pc) => pc.active).sort((a, b) => a.number - b.number),
     [state.pcs],
@@ -427,6 +463,9 @@ export function ClubProvider({ children }) {
         todayUsers,
         refreshData,
         createBooking,
+        togglePc,
+        startPcNow,
+        stopPc,
         approveBooking,
         rejectBooking,
         cancelBooking,

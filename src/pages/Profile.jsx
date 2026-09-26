@@ -2,6 +2,19 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext.jsx'
 import { useClub } from '../club/ClubContext.jsx'
+import { IconLanguage } from '../components/Icons.jsx'
+
+const LANGUAGES = [
+  { code: 'uz', name: 'O\'zbekcha', flag: '🇺🇿' },
+  { code: 'ru', name: 'Русский', flag: '🇷🇺' },
+  { code: 'en', name: 'English', flag: '🇺🇸' },
+]
+
+function getSavedLanguage() {
+  if (typeof window === 'undefined') return 'uz'
+  const saved = window.localStorage.getItem('app_language')
+  return LANGUAGES.some((lang) => lang.code === saved) ? saved : 'uz'
+}
 import { getTelegramInitData, isTelegramWebApp, openTelegramBot } from '../telegram/webApp.js'
 import { BOOKING_STATUS } from '../club/bookingRules.js'
 import {
@@ -21,6 +34,7 @@ export default function Profile() {
   const [saving, setSaving] = useState(false)
   const [telegramPassword, setTelegramPassword] = useState('')
   const [telegramBusy, setTelegramBusy] = useState(false)
+  const [language, setLanguage] = useState(getSavedLanguage)
   const telegramEmbedded = isTelegramWebApp()
 
   const bookings = useMemo(() => getBookingsForUser(user.id), [getBookingsForUser, user.id])
@@ -36,6 +50,13 @@ export default function Profile() {
   function toggleEditing() {
     if (!editing) setName(user.name)
     setEditing((value) => !value)
+  }
+
+  function changeLanguage(code) {
+    setLanguage(code)
+    window.localStorage.setItem('app_language', code)
+    setMessage(code === 'uz' ? 'Til o‘zgartirildi' : code === 'ru' ? 'Язык изменён' : 'Language changed')
+    window.setTimeout(() => setMessage(''), 2500)
   }
 
   async function saveProfile(event) {
@@ -168,6 +189,29 @@ export default function Profile() {
           </button>
         </form>
       ) : null}
+
+      <section className="card profile-language">
+        <div className="section-heading compact">
+          <div>
+            <span className="eyebrow">Sozlamalar</span>
+            <h2><IconLanguage size={18} /> Til / Language / Язык</h2>
+          </div>
+        </div>
+        <div className="language-options">
+          {LANGUAGES.map((lang) => (
+            <button
+              key={lang.code}
+              type="button"
+              className={`language-option ${language === lang.code ? 'active' : ''}`}
+              onClick={() => changeLanguage(lang.code)}
+            >
+              <span className="language-flag">{lang.flag}</span>
+              <span className="language-name">{lang.name}</span>
+              {language === lang.code ? <IconCheck size={16} /> : null}
+            </button>
+          ))}
+        </div>
+      </section>
 
       {editing ? (
         <form className="card profile-edit" onSubmit={saveProfile}>

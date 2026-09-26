@@ -105,6 +105,18 @@ export const IconPower = (props) => (
   </svg>
 )
 
+export const IconPlay = (props) => (
+  <svg {...base(props)}>
+    <path d="M7 4.5v15l12-7.5-12-7.5Z" />
+  </svg>
+)
+
+export const IconStop = (props) => (
+  <svg {...base(props)}>
+    <rect x="6" y="6" width="12" height="12" rx="2" />
+  </svg>
+)
+
 export const IconCheck = (props) => (
   <svg {...base(props)}>
     <path d="m4 12.5 5 5L20 6.5" />

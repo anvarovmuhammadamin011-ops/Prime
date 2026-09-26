@@ -16,7 +16,7 @@ import {
   reissueAccessCode,
   startSession,
 } from '../services/booking-service.js'
-import { getSettings, updateSettings } from '../services/club-service.js'
+import { getSettings, updateSettings, listPcs, setPcActive, startPcNow, stopPcSession } from '../services/club-service.js'
 import { listUsers, updateProfile } from '../services/user-service.js'
 import { BOOKING_STATUS } from '../domain/booking-rules.js'
 
@@ -166,6 +166,85 @@ export function createBookingRouter(pool, config) {
     asyncHandler(async (request, response) => {
       const input = z.object({ code: z.string().min(1).max(20) }).parse(request.body)
       response.json(await startSession(pool, request.user.id, input.code, config))
+    }),
+  )
+
+  // Admin PC boshqaruvi: yoqish/o'chirish
+  router.patch(
+    '/admin/pcs/:id',
+    ...staffOnly,
+    asyncHandler(async (request, response) => {
+      const pcId = idSchema.parse(request.params.id)
+      const input = z.object({ active: z.coerce.boolean() }).parse(request.body)
+      response.json({ pc: await setPcActive(pool, request.user.id, pcId, input.active) })
+    }),
+  )
+
+  // Admin PC'ni darhol ishga tushirish (hozir / belgilangan vaqt)
+  router.post(
+    '/admin/pcs/:id/start-now',
+    sessionLimiter,
+    ...staffOnly,
+    asyncHandler(async (request, response) => {
+      const pcId = idSchema.parse(request.params.id)
+      const input = z
+        .object({ minutes: z.coerce.number().int().min(15).max(720).optional(), hours: z.coerce.number().int().min(1).max(12).optional() })
+        .parse(request.body || {})
+      response.json(await startPcNow(pool, request.user.id, pcId, input))
+    }),
+  )
+
+  // Admin PC'dagi faol sessiyani to'xtatish
+  router.post(
+    '/admin/pcs/:id/stop',
+    ...staffOnly,
+    asyncHandler(async (request, response) => {
+      const pcId = idSchema.parse(request.params.id)
+      response.json(await stopPcSession(pool, request.user.id, pcId))
+    }),
+  )
+
+  // Admin PC ro'yxati (o'chirilganlari bilan)
+  router.get(
+    '/admin/pcs',
+    ...staffOnly,
+    asyncHandler(async (_request, response) => {
+      response.json({ pcs: await listPcs(pool, new Date(), { includeInactive: true }) })
+    }),
+  )
+
+  // Admin PC boshqaruvi: yoqish/o'chirish
+  router.patch(
+    '/admin/pcs/:id',
+    ...staffOnly,
+    asyncHandler(async (request, response) => {
+      const pcId = idSchema.parse(request.params.id)
+      const input = z.object({ active: z.coerce.boolean() }).parse(request.body)
+      response.json({ pc: await setPcActive(pool, request.user.id, pcId, input.active) })
+    }),
+  )
+
+  // Admin PC'ni darhol ishga tushirish (hozir / belgilangan vaqt)
+  router.post(
+    '/admin/pcs/:id/start-now',
+    sessionLimiter,
+    ...staffOnly,
+    asyncHandler(async (request, response) => {
+      const pcId = idSchema.parse(request.params.id)
+      const input = z
+        .object({ minutes: z.coerce.number().int().min(15).max(720).optional(), hours: z.coerce.number().int().min(1).max(12).optional() })
+        .parse(request.body || {})
+      response.json(await startPcNow(pool, request.user.id, pcId, input))
+    }),
+  )
+
+  // Admin PC'dagi faol sessiyani to'xtatish
+  router.post(
+    '/admin/pcs/:id/stop',
+    ...staffOnly,
+    asyncHandler(async (request, response) => {
+      const pcId = idSchema.parse(request.params.id)
+      response.json(await stopPcSession(pool, request.user.id, pcId))
     }),
   )
 
