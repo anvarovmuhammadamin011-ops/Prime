@@ -1,9 +1,13 @@
 import pg from 'pg'
 import { AppError } from '../utils/errors.js'
+import { createSqlitePool } from './sqlite/driver.js'
 
 const { Pool } = pg
 
 export function createPool(config) {
+  if (config.database.driver === 'sqlite') {
+    return createSqlitePool(config)
+  }
   const pool = new Pool({
     connectionString: config.database.url,
     max: config.database.max,
@@ -22,18 +26,39 @@ export async function query(pool, text, params = []) {
 }
 
 export async function assertSchema(pool) {
-  const result = await pool.query(
-    `SELECT to_regclass('public.users') AS users,
-            to_regclass('public.club_settings') AS club_settings,
-            to_regclass('public.pcs') AS pcs,
-            to_regclass('public.bookings') AS bookings,
-            to_regclass('public.sessions') AS sessions,
-            to_regclass('public.access_code_history') AS access_code_history,
-            to_regclass('public.refresh_tokens') AS refresh_tokens`,
-  )
-  const row = result.rows[0]
-  if (!row?.users || !row?.club_settings || !row?.pcs || !row?.bookings || !row?.sessions || !row?.access_code_history || !row?.refresh_tokens) {
-    throw new Error('Database schema tayyor emas. Avval db:migrate bajarilishi kerak')
+  const required = [
+    'users',
+    'club_settings',
+    'pcs',
+    'bookings',
+    'sessions',
+    'access_code_history',
+    'refresh_tokens',
+  ]
+  const result = pool.driver === 'sqlite'
+    ? await pool.query(
+      `SELECT name FROM sqlite_master WHERE type = 'table' AND name IN (${required.map(() => '?').join(', ')})`,
+      required,
+    )
+    : await pool.query(
+      `SELECT to_regclass('public.users') AS users,
+              to_regclass('public.club_settings') AS club_settings,
+              to_regclass('public.pcs') AS pcs,
+              to_regclass('public.bookings') AS bookings,
+              to_regclass('public.sessions') AS sessions,
+              to_regclass('public.access_code_history') AS access_code_history,
+              to_regclass('public.refresh_tokens') AS refresh_tokens`,
+    )
+  const present = new Set()
+  for (const row of result.rows) {
+    if (row.name) present.add(row.name)
+    for (const table of required) {
+      if (row[table]) present.add(row[table])
+    }
+  }
+  const missing = required.filter((table) => !present.has(table))
+  if (missing.length > 0) {
+    throw new Error(`Database schema tayyor emas. Avval db:migrate bajarilishi kerak (topilmadi: ${missing.join(', ')})`)
   }
 }
 

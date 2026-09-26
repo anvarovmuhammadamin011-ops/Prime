@@ -7,6 +7,10 @@ dist
 !.env.example
 .vite
 .vercel
-
-.vercel
 .env*
+
+# lokal ma'lumotlar va vositalar
+data/
+.agents/
+.claude/
+skills-lock.json

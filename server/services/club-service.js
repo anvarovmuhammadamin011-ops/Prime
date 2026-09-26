@@ -103,30 +103,35 @@ export async function listPcs(pool, now = new Date()) {
               ) THEN 'booked'
               ELSE 'free'
             END AS status,
-             current_session.id AS session_id,
-             current_session.started_at AS session_started_at,
-             current_session.ends_at AS session_ends_at,
-             current_booking.id AS booking_id,
-            current_booking.start_at AS booking_start_at,
-            current_booking.end_at AS booking_end_at
+             (SELECT s.id FROM sessions s
+               WHERE s.pc_id = p.id AND s.status = 'active'
+                 AND s.started_at <= $1 AND s.ends_at > $1
+               ORDER BY s.started_at DESC LIMIT 1) AS session_id,
+             (SELECT s.started_at FROM sessions s
+               WHERE s.pc_id = p.id AND s.status = 'active'
+                 AND s.started_at <= $1 AND s.ends_at > $1
+               ORDER BY s.started_at DESC LIMIT 1) AS session_started_at,
+             (SELECT s.ends_at FROM sessions s
+               WHERE s.pc_id = p.id AND s.status = 'active'
+                 AND s.started_at <= $1 AND s.ends_at > $1
+               ORDER BY s.started_at DESC LIMIT 1) AS session_ends_at,
+             (SELECT b.id FROM bookings b
+               WHERE b.pc_id = p.id AND b.status IN ('pending', 'approved', 'active')
+                 AND b.start_at <= $1 AND b.end_at > $1
+               ORDER BY b.start_at LIMIT 1) AS booking_id,
+             (SELECT b.start_at FROM bookings b
+               WHERE b.pc_id = p.id AND b.status IN ('pending', 'approved', 'active')
+                 AND b.start_at <= $1 AND b.end_at > $1
+               ORDER BY b.start_at LIMIT 1) AS booking_start_at,
+             (SELECT b.end_at FROM bookings b
+               WHERE b.pc_id = p.id AND b.status IN ('pending', 'approved', 'active')
+                 AND b.start_at <= $1 AND b.end_at > $1
+               ORDER BY b.start_at LIMIT 1) AS booking_end_at
      FROM pcs p
-     LEFT JOIN LATERAL (
-        SELECT id, started_at, ends_at FROM sessions
-        WHERE pc_id = p.id AND status = 'active'
-          AND started_at <= $1 AND ends_at > $1
-        ORDER BY started_at DESC LIMIT 1
-     ) current_session ON true
-     LEFT JOIN LATERAL (
-        SELECT id, start_at, end_at FROM bookings
-        WHERE pc_id = p.id AND status IN ('pending', 'approved', 'active')
-          AND start_at <= $1 AND end_at > $1
-        ORDER BY start_at LIMIT 1
-     ) current_booking ON true
      WHERE p.active = true
      ORDER BY p.pc_number`,
     [now],
   )
-
   return result.rows.map((row) => ({
     id: row.id,
     number: row.pc_number,

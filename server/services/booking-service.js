@@ -142,6 +142,17 @@ export async function createBooking(pool, userId, input, now = new Date()) {
       if (!pc) throw new AppError(404, 'PC_NOT_FOUND', 'Tanlangan PC topilmadi')
 
       const endAt = calculateEndAt(startAt, durationHours)
+      const conflictResult = await client.query(
+        `SELECT id FROM bookings
+         WHERE status IN ('pending', 'approved', 'active')
+           AND start_at < $3 AND end_at > $2
+           AND (pc_id = $1 OR user_id = $4)
+         LIMIT 1`,
+        [input.pcId, startAt, endAt, userId],
+      )
+      if (conflictResult.rowCount > 0) {
+        throw new AppError(409, 'BOOKING_CONFLICT', 'Bu vaqt oralig‘ida PC yoki foydalanuvchi band')
+      }
       const result = await client.query(
         `INSERT INTO bookings (
            user_id, pc_id, start_at, end_at, duration_hours, price_per_hour, total_price

@@ -52,10 +52,23 @@ describe('server configuration', () => {
   it('requires verified database TLS in production', () => {
     expect(() => getConfig({
       NODE_ENV: 'production',
+      DB_DRIVER: 'postgres',
       JWT_SECRET: 'a'.repeat(32),
       ACCESS_CODE_PEPPER: 'p'.repeat(32),
       DB_SSL: 'false',
     })).toThrow('DB_SSL=true')
+  })
+
+  it('does not require database TLS for the embedded sqlite driver', () => {
+    const config = getConfig({
+      NODE_ENV: 'production',
+      DB_DRIVER: 'sqlite',
+      JWT_SECRET: 'a'.repeat(32),
+      ACCESS_CODE_PEPPER: 'p'.repeat(32),
+      DB_SSL: 'false',
+    })
+    expect(config.database.driver).toBe('sqlite')
+    expect(config.database.file).toBe('data/prime-club.db')
   })
 
   it('verifies database certificates by default and allows an explicit opt-out', () => {

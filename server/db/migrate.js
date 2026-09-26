@@ -5,11 +5,30 @@ import { getConfig } from '../config.js'
 import { createPool } from './client.js'
 
 const migrationsDirectory = path.join(path.dirname(fileURLToPath(import.meta.url)), 'migrations')
+const sqliteSchemaFile = path.join(path.dirname(fileURLToPath(import.meta.url)), 'sqlite', 'schema.sql')
 const migrationLockKey = 'prime-club-schema-migrations'
+
+async function runSqliteMigrations(client) {
+  const sql = await readFile(sqliteSchemaFile, 'utf8')
+  const versions = (await readdir(migrationsDirectory))
+    .filter((file) => file.endsWith('.sql'))
+    .sort()
+  await client.query(sql)
+  for (const version of versions) {
+    await client.query(
+      'INSERT INTO schema_migrations (version) VALUES (?) ON CONFLICT (version) DO NOTHING',
+      [version],
+    )
+  }
+  return versions
+}
 
 export async function runMigrations(pool) {
   const client = await pool.connect()
   try {
+    if (pool.driver === 'sqlite') {
+      return await runSqliteMigrations(client)
+    }
     await client.query('SELECT pg_advisory_lock(hashtext($1))', [migrationLockKey])
     await client.query(`
       CREATE TABLE IF NOT EXISTS schema_migrations (
@@ -41,7 +60,9 @@ export async function runMigrations(pool) {
     return files
   } finally {
     try {
-      await client.query('SELECT pg_advisory_unlock(hashtext($1))', [migrationLockKey])
+      if (pool.driver !== 'sqlite') {
+        await client.query('SELECT pg_advisory_unlock(hashtext($1))', [migrationLockKey])
+      }
     } finally {
       client.release()
     }

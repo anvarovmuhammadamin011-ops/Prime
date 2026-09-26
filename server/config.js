@@ -29,6 +29,8 @@ const nodeEnvironment = z.preprocess(
 const environmentSchema = z.object({
   NODE_ENV: nodeEnvironment,
   PORT: z.coerce.number().int().min(1).max(65535).default(4000),
+  DB_DRIVER: z.enum(['sqlite', 'postgres']).default('sqlite'),
+  SQLITE_FILE: z.string().min(1).default('data/prime-club.db'),
   DATABASE_URL: z
     .string()
     .min(1)
@@ -70,7 +72,7 @@ export function getConfig(environment = process.env) {
     if (isPlaceholderSecret(values.ACCESS_CODE_PEPPER)) {
       throw new Error('Production uchun real ACCESS_CODE_PEPPER talab qilinadi')
     }
-    if (!values.DB_SSL) {
+    if (values.DB_DRIVER === 'postgres' && !values.DB_SSL) {
       throw new Error('Production uchun DB_SSL=true talab qilinadi')
     }
     if (values.TELEGRAM_ENABLED) {
@@ -89,7 +91,9 @@ export function getConfig(environment = process.env) {
     nodeEnv: values.NODE_ENV,
     port: values.PORT,
     database: {
+      driver: values.DB_DRIVER,
       url: values.DATABASE_URL,
+      file: values.SQLITE_FILE,
       ssl: values.DB_SSL
         ? { rejectUnauthorized: values.DB_SSL_REJECT_UNAUTHORIZED, ca: values.DB_SSL_CA || undefined }
         : undefined,
