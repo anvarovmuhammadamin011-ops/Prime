@@ -1,6 +1,10 @@
 const SESSION_KEY = 'prime-v1-api-session'
-const DEFAULT_API_BASE_URL = import.meta.env.PROD ? '/api/v1' : 'http://localhost:4000/api/v1'
-const API_BASE_URL = String(import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL).replace(/\/$/, '')
+// Production'da env berilmagan bo'lsa ham frontend ishlab turishi uchun Render API manzili fallback
+const RENDER_API_BASE_URL = 'https://prime-club-api.onrender.com/api/v1'
+const DEFAULT_API_BASE_URL = import.meta.env.PROD
+  ? (String(import.meta.env.VITE_API_BASE_URL || '').trim() || RENDER_API_BASE_URL)
+  : 'http://localhost:4000/api/v1'
+const API_BASE_URL = String(DEFAULT_API_BASE_URL).replace(/\/$/, '')
 
 let session = readSession()
 let refreshPromise = null

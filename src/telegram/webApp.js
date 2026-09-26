@@ -35,7 +35,7 @@ export function initializeTelegramWebApp() {
 }
 
 export function openTelegramBot() {
-  const username = String(import.meta.env.VITE_TELEGRAM_BOT_USERNAME || '').trim().replace(/^@/, '')
+  const username = String(import.meta.env.VITE_TELEGRAM_BOT_USERNAME || 'primen1robot').trim().replace(/^@/, '')
   if (!/^[a-zA-Z][a-zA-Z0-9_]{4,31}$/.test(username)) return false
   const url = `https://t.me/${username}?startapp`
   const webApp = getWebApp()
