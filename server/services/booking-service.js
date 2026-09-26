@@ -507,29 +507,32 @@ export async function expireState(pool, now = new Date()) {
        WHERE status = 'pending' AND start_at + interval '10 minutes' <= $1`,
       [now],
     )
-    const noShows = await client.query(
-      `WITH expired AS (
-         SELECT id, access_code_hash
-         FROM bookings
-         WHERE status = 'approved'
-           AND (
-             end_at <= $1
-             OR $1 >= COALESCE(
-               arrival_due_at + interval '5 minutes',
-               start_at + interval '10 minutes'
-             )
+    const expiring = await client.query(
+      `SELECT id, access_code_hash
+       FROM bookings
+       WHERE status = 'approved'
+         AND (
+           end_at <= $1
+           OR $1 >= COALESCE(
+             arrival_due_at + interval '5 minutes',
+             start_at + interval '10 minutes'
            )
-         FOR UPDATE
-       ), updated AS (
-         UPDATE bookings b
-         SET status = 'no_show', access_code_hash = NULL, access_code_ciphertext = NULL
-         FROM expired e
-         WHERE b.id = e.id
-         RETURNING e.access_code_hash
-       )
-       SELECT access_code_hash FROM updated`,
+         )
+       FOR UPDATE`,
       [now],
     )
+    if (expiring.rowCount > 0) {
+      await client.query(
+        `UPDATE bookings
+         SET status = 'no_show', access_code_hash = NULL, access_code_ciphertext = NULL
+         WHERE id = ANY($1::uuid[]) AND status = 'approved'`,
+        [expiring.rows.map((row) => row.id)],
+      )
+    }
+    const noShows = {
+      rows: expiring.rows.map((row) => ({ access_code_hash: row.access_code_hash })),
+      rowCount: expiring.rowCount,
+    }
     for (const row of noShows.rows) {
       if (row.access_code_hash) {
         await client.query(
