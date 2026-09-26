@@ -14,6 +14,7 @@
     "db:bootstrap-admin": "node server/db/bootstrap-admin.js",
     "setup:demo": "npm run db:migrate && npm run db:seed",
     "verify:demo": "node scripts/verify-demo-login.mjs",
+    "verify:mock": "node scripts/verify-mock-demo.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",

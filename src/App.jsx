@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react'
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { isDemoMode } from './api/client.js'
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx'
 import { ClubProvider } from './club/ClubContext.jsx'
 import AdminLayout from './components/AdminLayout.jsx'
@@ -92,12 +94,41 @@ function Routed() {
   )
 }
 
+function DemoBadge() {
+  const [demo, setDemo] = useState(isDemoMode())
+  useEffect(() => {
+    const timer = window.setInterval(() => setDemo(isDemoMode()), 1000)
+    return () => window.clearInterval(timer)
+  }, [])
+  if (!demo) return null
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        bottom: 12,
+        left: 12,
+        zIndex: 9999,
+        padding: '6px 12px',
+        borderRadius: 999,
+        background: 'rgba(250, 204, 21, 0.92)',
+        color: '#1c1917',
+        fontWeight: 700,
+        fontSize: 12,
+        boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
+      }}
+    >
+      DEMO rejim — backend offline, ma‘lumotlar brauzerda saqlanadi
+    </div>
+  )
+}
+
 export default function App() {
   return (
     <AuthProvider>
       <ClubProvider>
         <HashRouter>
           <Routed />
+          <DemoBadge />
         </HashRouter>
       </ClubProvider>
     </AuthProvider>

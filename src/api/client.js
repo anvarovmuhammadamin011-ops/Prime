@@ -1,10 +1,23 @@
+import { isDemoMode as isMockDemoMode, mockRequest } from './mock-server.js'
+
 const SESSION_KEY = 'prime-v1-api-session'
 // Production'da env berilmagan bo'lsa ham frontend ishlab turishi uchun Render API manzili fallback
-const RENDER_API_BASE_URL = 'https://prime-club-api.onrender.com/api/v1'
+const RENDER_API_BASE_URL = 'https://prime-club-api-x7ab.onrender.com/api/v1'
 const DEFAULT_API_BASE_URL = import.meta.env.PROD
   ? (String(import.meta.env.VITE_API_BASE_URL || '').trim() || RENDER_API_BASE_URL)
   : 'http://localhost:4000/api/v1'
 const API_BASE_URL = String(DEFAULT_API_BASE_URL).replace(/\/$/, '')
+
+// Backend tavfsiz holatda demo (mock) rejimga avtomatik o'tish
+let demoMode = isMockDemoMode()
+function enableDemoMode() {
+  if (demoMode) return
+  demoMode = true
+  if (typeof window !== 'undefined') window.__PRIME_DEMO_MODE__ = true
+}
+export function isDemoMode() {
+  return demoMode
+}
 
 let session = readSession()
 let refreshPromise = null
@@ -107,10 +120,20 @@ async function request(path, options = {}) {
     })
   } catch (error) {
     if (error?.name === 'AbortError') throw error
-    throw new ApiError('API serverga ulanib bo‘lmadi', { status: 0, code: 'NETWORK_ERROR' })
+    const networkError = new ApiError('API serverga ulanib bo‘lmadi', { status: 0, code: 'NETWORK_ERROR' })
+    networkError.backendUnavailable = true
+    throw networkError
   }
   const data = await parseResponse(response)
-  if (!response.ok) throw errorFromResponse(response.status, data)
+  if (!response.ok) {
+    const error = errorFromResponse(response.status, data)
+    const contentType = response.headers.get('content-type') || ''
+    // JSON bo'lmagan 404/5xx — bu odatda routier yoki proxy javobi (masalan Render "no-server")
+    if ([404, 405, 502, 503].includes(response.status) && !contentType.includes('application/json')) {
+      error.backendUnavailable = true
+    }
+    throw error
+  }
   return data
 }
 
@@ -118,7 +141,7 @@ async function refreshAccessToken() {
   const refreshToken = session?.refreshToken
   if (!refreshToken) return false
   if (refreshPromise) return refreshPromise
-  refreshPromise = request('/auth/refresh', {
+  refreshPromise = dispatch('/auth/refresh', {
     method: 'POST',
     body: { refreshToken },
     auth: false,
@@ -142,13 +165,43 @@ async function refreshAccessToken() {
   return refreshPromise
 }
 
-export async function apiRequest(path, options = {}) {
+function mockDispatch(path, options = {}) {
+  const headers = { ...(options.headers || {}) }
+  if (options.auth !== false && session?.accessToken) {
+    headers.Authorization = `Bearer ${session.accessToken}`
+  }
+  return mockRequest(path, { ...options, headers }).catch((error) => {
+    if (error?.mockResponse) {
+      throw errorFromResponse(error.mockResponse.status, error.mockResponse.payload)
+    }
+    throw error
+  })
+}
+
+async function dispatch(path, options = {}) {
+  if (demoMode) return mockDispatch(path, options)
   try {
     return await request(path, options)
   } catch (error) {
+    const unavailable =
+      error instanceof ApiError &&
+      (error.backendUnavailable || error.status === 0) &&
+      options.retry !== false &&
+      !options.signal
+    if (!unavailable) throw error
+    // Backend javob bermadi — demo rejimga o'tamiz va so'rovni mock bilan davom ettiramiz
+    enableDemoMode()
+    return mockDispatch(path, options)
+  }
+}
+
+export async function apiRequest(path, options = {}) {
+  try {
+    return await dispatch(path, options)
+  } catch (error) {
     if (error instanceof ApiError && error.status === 401 && options.auth !== false && options.retry !== false) {
       const refreshed = await refreshAccessToken()
-      if (refreshed) return request(path, { ...options, retry: false })
+      if (refreshed) return dispatch(path, { ...options, retry: false })
     }
     throw error
   }
